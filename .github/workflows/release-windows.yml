@@ -1,0 +1,106 @@
+# Gera o instalador do Windows, assina com o SignPath e publica na release da tag.
+# Pré-requisitos (feitos no GitHub e no SignPath, não no código):
+#   - Secret  SIGNPATH_API_TOKEN          (token da API do SignPath)
+#   - Variável SIGNPATH_ORGANIZATION_ID   (ID da organização no SignPath)
+#   - Projeto "agua-lembrete" e política "release-signing" criados no SignPath
+#   - A release vX.Y.Z já existe (criada com gh release create); esta etapa só anexa os arquivos
+# A ação do SignPath está fixada no commit f6d04783… (tag v3). Para atualizar, troque o commit
+# depois de conferir o código da nova versão.
+
+name: Release Windows (assinado)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+# Padrão somente leitura. Só o job "release" recebe escrita no repositório.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Gerar o instalador sem assinatura
+        run: npm run dist:win
+      - name: Guardar o instalador sem assinatura
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installer
+          path: dist/agua-setup-*.exe
+          retention-days: 1
+
+  sign:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar para assinatura no SignPath
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: agua-lembrete
+          signing-policy-slug: release-signing
+          github-artifact-id: ${{ needs.build.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+      - name: Atualizar latest.yml com o hash do instalador assinado
+        # O electron-updater confere o sha512 do instalador. Depois de assinar, o hash muda,
+        # então o latest.yml precisa ser gerado de novo a partir do arquivo assinado.
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          EXE="signed/agua-setup-${VERSION}.exe"
+          SHA512=$(openssl dgst -sha512 -binary "$EXE" | base64 -w0)
+          SIZE=$(stat -c %s "$EXE")
+          cat > latest.yml <<EOF
+          version: ${VERSION}
+          files:
+            - url: agua-setup-${VERSION}.exe
+              sha512: ${SHA512}
+              size: ${SIZE}
+          path: agua-setup-${VERSION}.exe
+          sha512: ${SHA512}
+          releaseDate: '$(date -u +%Y-%m-%dT%H:%M:%SZ)'
+          EOF
+          mv "$EXE" "agua-setup-${VERSION}.exe"
+      - name: Guardar os arquivos da release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-files
+          path: |
+            agua-setup-*.exe
+            latest.yml
+          retention-days: 1
+
+  release:
+    needs: sign
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Baixar os arquivos assinados
+        uses: actions/download-artifact@v4
+        with:
+          name: release-files
+      - name: Anexar à release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          gh release upload "$TAG" "agua-setup-${VERSION}.exe" latest.yml --repo "$REPO" --clobber

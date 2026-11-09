@@ -61,6 +61,14 @@ Os arquivos saem em `dist/`. Gerar o `.exe` no Ubuntu precisa do wine (`sudo apt
 - `preload.js`: ponte segura entre as telas e o processo principal.
 - `mockup/`: protótipo visual em HTML, sem o Electron.
 
+## Licença e assinatura
+
+Código sob a [licença MIT](LICENSE).
+
+Free code signing provided by SignPath.io, certificate by SignPath Foundation
+
+A política de assinatura está em [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md).
+
 ## Status
 
 Versão 0.3.0.
