@@ -55,8 +55,8 @@
     document.getElementById('b2').onclick = () => window.agua.snooze();
   }
 
-  // Som de alerta gerado pelo próprio navegador (sem arquivo de áudio)
-  try {
+  // Som de alerta gerado pelo próprio navegador (sem arquivo de áudio); pode ser desligado nas configurações
+  if (new URLSearchParams(location.search).get('sound') !== '0') try {
     const c = new (window.AudioContext || window.webkitAudioContext)();
     c.resume();
     [0, 0.45].forEach(t => {

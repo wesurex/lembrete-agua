@@ -1,13 +1,13 @@
 {
   "name": "agua-lembrete",
-  "version": "0.2.0",
-  "description": "Lembrete recorrente para beber água (protótipo)",
+  "version": "0.3.0",
+  "description": "Lembrete de água e de bater o ponto, para quem tem rotina corrida",
   "private": true,
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "electron . --test",
-    "dist": "electron-builder --linux deb --win nsis"
+    "dist": "electron-builder --linux deb --win nsis --publish never"
   },
   "devDependencies": {
     "electron": "^45.2.3",
@@ -16,7 +16,11 @@
   "build": {
     "appId": "com.wesley.agua",
     "productName": "Água",
-    "publish": null,
+    "publish": {
+      "provider": "github",
+      "owner": "wesurex",
+      "repo": "lembrete-agua"
+    },
     "directories": {
       "output": "dist"
     },
@@ -45,12 +49,16 @@
     "nsis": {
       "oneClick": true,
       "perMachine": false,
-      "runAfterFinish": false
+      "runAfterFinish": false,
+      "artifactName": "agua-setup-${version}.${ext}"
     }
   },
   "homepage": "https://localhost",
   "author": {
     "name": "Wesley",
     "email": "agua@localhost"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

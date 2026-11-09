@@ -285,8 +285,9 @@
       let cls = k > hoje ? 'future' : 'none', sub = '';
       if (s) {
         tot += s.ml; drinks += s.drinks; fired += s.fired; att += s.atendidos; miss += s.missed; recDays++;
-        if (s.ml >= goal) { cls = 'met'; metDays++; } else if (s.ml > 0) cls = 'part';
-        sub = Math.round(s.ml / goal * 100) + '%';
+        const g = s.goal || goal; // meta que valia naquele dia
+        if (s.ml >= g) { cls = 'met'; metDays++; } else if (s.ml > 0) cls = 'part';
+        sub = Math.round(s.ml / g * 100) + '%';
       }
       cells += `<button class="day ${cls} ${sel === k ? 'sel' : ''}" onclick="pickDay('${k}')">${d}<small>${sub}</small></button>`;
     }
@@ -322,10 +323,11 @@
     const title = `${d} de ${MESES[m - 1]} de ${y}`;
     const s = R.days[sel];
     if (!s) return `<h3>${title}</h3><p class="muted">Sem registros nesse dia.</p>`;
-    const pct = Math.round(s.ml / goal * 100);
+    const g = s.goal || goal;
+    const pct = Math.round(s.ml / g * 100);
     return `<h3>${title}</h3>
       <div class="grid3">
-        <div><small>Bebeu</small><strong>${s.ml} ml</strong><small>${pct}% da meta de ${goal} ml</small></div>
+        <div><small>Bebeu</small><strong>${s.ml} ml</strong><small>${pct}% da meta de ${g} ml</small></div>
         <div><small>Copos</small><strong>${s.drinks}</strong></div>
         <div><small>Lembretes</small><strong>${s.atendidos} de ${s.fired}</strong><small>${s.missed} perdido(s)</small></div>
       </div>`;
@@ -363,6 +365,12 @@
         <div class="chips" style="margin-top:10px">
           ${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map((d, i) => `<button class="chip day ${C.days[i] ? 'on' : ''}" onclick="toggleDay(${i})">${d}</button>`).join('')}
         </div>
+      </section>
+      <section class="card">
+        <h2>Sistema</h2>
+        ${toggleRow('Abrir ao ligar o computador', 'autostart')}
+        ${toggleRow('Alerta sonoro', 'sound')}
+        ${toggleRow('Alerta em tela cheia (desligado = janela pequena)', 'visual')}
       </section>
       ${cardPonto()}
     </div>
@@ -417,6 +425,13 @@
   }
   function togglePonto() { C.ponto.enabled = !C.ponto.enabled; render(); }
   function togglePontoDay(i) { C.ponto.days[i] = !C.ponto.days[i]; render(); }
+  function toggleRow(label, key) {
+    return `<div class="toggle-row" style="padding:10px 0;border-top:1px solid var(--line)">
+      <span>${label}</span>
+      <button class="switch ${C[key] ? 'on' : ''}" role="switch" aria-checked="${C[key]}" onclick="flipSetting('${key}')" aria-label="${label}"><i></i></button>
+    </div>`;
+  }
+  function flipSetting(k) { C[k] = !C[k]; render(); }
   function setPontoClt(v) {
     C.ponto.clt = v;
     const base = ['08:00', '12:00', '13:00', '17:00'];
@@ -429,7 +444,10 @@
   function setPontoLead(n) { C.ponto.leadMin = n; render(); }
 
   async function saveCfg() {
-    const r = await agua.saveConfig({ start: C.start, end: C.end, iv: C.iv, goalMl: C.goalMl, days: C.days, ponto: C.ponto });
+    const r = await agua.saveConfig({
+      start: C.start, end: C.end, iv: C.iv, goalMl: C.goalMl, days: C.days,
+      autostart: C.autostart, sound: C.sound, visual: C.visual, ponto: C.ponto
+    });
     msg = r.ok ? { text: 'Salvo. Vale a partir de agora.', err: false } : { text: r.error, err: true };
     render();
   }

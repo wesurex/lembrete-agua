@@ -1,18 +1,21 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, screen, powerMonitor } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { autoUpdater } = require('electron-updater');
 
 const DEFAULTS = {
   start: '06:30', end: '16:18', iv: 60, goalMl: 2500,
   days: [false, true, true, true, true, true, false],
+  autostart: false, sound: true, visual: true,
   ponto: { enabled: false, clt: true, times: ['08:00', '12:00', '13:00', '17:00'], leadMin: 5, days: [false, true, true, true, true, true, false] }
 };
 const SNOOZE_MS = 10 * 60 * 1000;
 const PONTO_SNOOZE_MS = 5 * 60 * 1000;
 const GLASS_ML = 250;
+const UPDATE_EVERY_MS = 6 * 60 * 60 * 1000;
 
 let CFG = { ...DEFAULTS };
-let history = []; // eventos: { t, type: 'fired' | 'drink', ml?, fromAlert? }
+let history = []; // eventos: { t, type: 'fired' | 'drink', ml?, fromAlert?, goalMl? }
 const dataFile = name => path.join(app.getPath('userData'), name);
 
 function loadConfig() {
@@ -62,19 +65,21 @@ function validate(c) {
     ok: true,
     cfg: {
       start: c.start, end: c.end, iv, goalMl, days: c.days.map(Boolean),
+      autostart: !!c.autostart, sound: c.sound !== false, visual: c.visual !== false,
       ponto: { enabled: !!p.enabled, clt: !!p.clt, times, leadMin, days: pDays }
     }
   };
 }
 
-// Resumo por dia para o calendário: ml bebido, copos, lembretes disparados, atendidos e perdidos
+// Resumo por dia para o calendário. A meta vai junto de cada lembrete disparado,
+// então mudar a meta hoje não reescreve os dias anteriores.
 function daySummary() {
   const out = {};
   for (const e of history) {
     const d = new Date(e.t);
     const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    if (!out[k]) out[k] = { ml: 0, drinks: 0, fired: 0, atendidos: 0, missed: 0 };
-    if (e.type === 'fired') out[k].fired++;
+    if (!out[k]) out[k] = { ml: 0, drinks: 0, fired: 0, atendidos: 0, missed: 0, goal: null };
+    if (e.type === 'fired') { out[k].fired++; if (e.goalMl) out[k].goal = e.goalMl; }
     if (e.type === 'drink') { out[k].ml += e.ml; out[k].drinks++; if (e.fromAlert) out[k].atendidos++; }
   }
   for (const k in out) out[k].missed = Math.max(0, out[k].fired - out[k].atendidos);
@@ -88,23 +93,48 @@ const todayTimes = () => {
   return r;
 };
 
+// Abrir com o computador: Windows e macOS usam a API do Electron; no Ubuntu é um arquivo em ~/.config/autostart
+function applyAutostart(on) {
+  if (process.platform === 'linux') {
+    const file = path.join(app.getPath('home'), '.config', 'autostart', 'agua-lembrete.desktop');
+    if (!on) { fs.rmSync(file, { force: true }); return; }
+    const exec = app.isPackaged ? `"${process.execPath}"` : `"${process.execPath}" "${app.getAppPath()}"`;
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, [
+      '[Desktop Entry]', 'Type=Application', 'Name=Água',
+      'Comment=Lembrete para beber água e bater o ponto',
+      `Exec=${exec} --background`, 'Terminal=false', 'X-GNOME-Autostart-enabled=true', ''
+    ].join('\n'));
+    return;
+  }
+  app.setLoginItemSettings({ openAtLogin: on, args: ['--background'] });
+}
+
 let tray = null;
 let alertWin = null;
 let alertCtx = { real: false, ponto: null }; // o que o alerta aberto representa
+const pendingAlerts = []; // alertas que chegaram enquanto outro estava aberto
 let mainWin = null;
-let lastFire = -1;
-let lastPonto = -1;
 let snoozeTimer = null;
+const firedKeys = new Set(); // lembretes já disparados hoje
+let firedDay = '';
 
 // real = lembrete de água de verdade (conta no histórico); teste não entra nas métricas.
 // ponto = horário da marcação (quando é alerta de bater ponto); não entra no histórico de água.
+// Se já há um alerta aberto, este entra na fila e abre quando o atual fechar.
 function openAlert(real = false, ponto = null) {
-  if (alertWin) return;
+  if (alertWin) {
+    if (!pendingAlerts.some(p => p.real === real && p.ponto === ponto)) pendingAlerts.push({ real, ponto });
+    return;
+  }
   alertCtx = { real, ponto };
-  const { bounds } = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+  const b = screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).bounds;
+  // "tela cheia" desligado: janela pequena centralizada, ainda por cima das outras
+  const size = CFG.visual
+    ? { x: b.x, y: b.y, width: b.width, height: b.height }
+    : { x: b.x + Math.round((b.width - 480) / 2), y: b.y + Math.round((b.height - 600) / 2), width: 480, height: 600 };
   alertWin = new BrowserWindow({
-    x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height,
-    frame: false, alwaysOnTop: true, skipTaskbar: true, resizable: false, movable: false,
+    ...size, frame: false, alwaysOnTop: true, skipTaskbar: true, resizable: false, movable: false,
     show: false, backgroundColor: '#ffffff',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -113,9 +143,15 @@ function openAlert(real = false, ponto = null) {
     }
   });
   alertWin.setAlwaysOnTop(true, 'screen-saver');
-  alertWin.loadFile(path.join(__dirname, 'alert.html'), { query: ponto ? { ponto } : {} });
+  const query = { sound: CFG.sound ? '1' : '0' };
+  if (ponto) query.ponto = ponto;
+  alertWin.loadFile(path.join(__dirname, 'alert.html'), { query });
   alertWin.once('ready-to-show', () => { alertWin.show(); alertWin.focus(); });
-  alertWin.on('closed', () => { alertWin = null; });
+  alertWin.on('closed', () => {
+    alertWin = null;
+    const next = pendingAlerts.shift();
+    if (next) openAlert(next.real, next.ponto);
+  });
 }
 
 function closeAlert() {
@@ -138,22 +174,25 @@ function openMain() {
   mainWin.on('closed', () => { mainWin = null; });
 }
 
-// Checa a cada 15 s. lastFire / lastPonto evitam repetir no mesmo minuto.
-// Limitação do protótipo: se um alerta já está aberto, o outro é descartado.
+// Checa a cada 15 s. Cada lembrete dispara uma vez por dia, na janela de 1 minuto
+// a partir do horário (cobre atraso de alguns segundos ao acordar o computador).
 function tick() {
   const d = new Date();
+  const day = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  if (day !== firedDay) { firedDay = day; firedKeys.clear(); }
   const m = d.getHours() * 60 + d.getMinutes();
-  if (CFG.days[d.getDay()] && todayTimes().includes(m) && lastFire !== m) {
-    lastFire = m;
-    record({ type: 'fired' });
-    openAlert(true);
+  const once = (key, fn) => { if (!firedKeys.has(key)) { firedKeys.add(key); fn(); } };
+
+  if (CFG.days[d.getDay()]) {
+    const t = todayTimes().find(x => m >= x && m <= x + 1);
+    if (t !== undefined) once(`agua-${t}`, () => {
+      record({ type: 'fired', goalMl: CFG.goalMl });
+      openAlert(true);
+    });
   }
   if (CFG.ponto.enabled && CFG.ponto.days[d.getDay()]) {
-    const hit = CFG.ponto.times.find(t => toM(t) - CFG.ponto.leadMin === m);
-    if (hit && lastPonto !== m) {
-      lastPonto = m;
-      openAlert(false, hit);
-    }
+    const hit = CFG.ponto.times.find(p => { const a = toM(p) - CFG.ponto.leadMin; return m >= a && m <= a + 1; });
+    if (hit !== undefined) once(`ponto-${hit}`, () => openAlert(false, hit));
   }
 }
 
@@ -170,10 +209,20 @@ function createTray() {
   tray.on('double-click', openMain);
 }
 
+// Atualização automática: só no app instalado. Sem internet ou no .deb, o erro é ignorado.
+function setupUpdates() {
+  if (!app.isPackaged) return;
+  autoUpdater.on('error', () => {});
+  const check = () => autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+  check();
+  setInterval(check, UPDATE_EVERY_MS);
+}
+
 ipcMain.handle('config:get', () => CFG);
 ipcMain.handle('config:save', (_e, c) => {
   const r = validate(c);
   if (!r.ok) return r;
+  try { applyAutostart(r.cfg.autostart); } catch (e) { return { ok: false, error: 'Não consegui ajustar a inicialização automática' }; }
   CFG = r.cfg;
   fs.mkdirSync(app.getPath('userData'), { recursive: true });
   fs.writeFileSync(dataFile('config.json'), JSON.stringify(CFG, null, 2));
@@ -197,7 +246,7 @@ ipcMain.on('ponto:snooze', () => {
 });
 ipcMain.on('alert:test', () => openAlert(false));
 
-// Abrir o app de novo (ícone no menu de apps ou npm start) mostra a janela; no Ubuntu é o "duplo clique" possível
+// Abrir o app de novo (ícone no menu de apps ou npm start) mostra a janela
 app.on('second-instance', openMain);
 
 if (!app.requestSingleInstanceLock()) {
@@ -206,10 +255,14 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadConfig();
     loadHistory();
+    if (CFG.autostart) { try { applyAutostart(true); } catch (e) { /* segue sem inicialização automática */ } }
     createTray();
     setInterval(tick, 15000);
+    // Ao acordar do suspenso, confere os lembretes na hora
+    powerMonitor.on('resume', tick);
+    setupUpdates();
     if (process.argv.includes('--test')) setTimeout(() => openAlert(false), 1500);
-    // Abre a janela ao iniciar; --background só deixa na bandeja (uso futuro, com inicialização automática)
+    // Abre a janela ao iniciar; --background (usado na inicialização automática) só deixa na bandeja
     if (!process.argv.includes('--background')) openMain();
   });
   // Fica em segundo plano: fechar a janela não encerra o app (só o "Sair" da bandeja)

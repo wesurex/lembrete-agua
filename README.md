@@ -63,8 +63,11 @@ Os arquivos saem em `dist/`. Gerar o `.exe` no Ubuntu precisa do wine (`sudo apt
 
 ## Status
 
-Versão 0.2.0. Ainda não tem:
+Versão 0.3.0.
 
-- abrir automaticamente com o computador;
-- som e alerta visual configuráveis na tela de Configurações;
-- assinatura digital dos instaladores.
+Incluído nesta versão: abrir com o computador (Windows e Ubuntu), som e tela cheia configuráveis, fila de alertas (água e ponto não se perdem), tolerância de 1 minuto para lembretes atrasados e atualização automática no Windows.
+
+Ainda não tem:
+
+- assinatura digital dos instaladores (por isso o aviso do SmartScreen no Windows);
+- atualização automática no Ubuntu: lá é preciso instalar o novo `.deb` manualmente.
