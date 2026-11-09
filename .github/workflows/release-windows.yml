@@ -20,6 +20,8 @@ permissions:
 
 jobs:
   build:
+    # Só roda depois que o SignPath estiver configurado; até lá, as tags não disparam nada.
+    if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
     runs-on: windows-latest
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}

@@ -1,6 +1,6 @@
 {
   "name": "agua-lembrete",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Lembrete de água e de bater o ponto, para quem tem rotina corrida",
   "private": true,
   "main": "main.js",
@@ -31,7 +31,8 @@
       "main.html",
       "alert.html",
       "tray.png",
-      "package.json"
+      "package.json",
+      "i18n.js"
     ],
     "linux": {
       "target": [

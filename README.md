@@ -7,32 +7,33 @@ Para quem tem rotina corrida: você configura os horários uma vez e esquece. Qu
 ## O que ele faz
 
 - **Lembretes de água recorrentes:** você escolhe o horário de início e de fim, o intervalo (30, 45, 60, 90 ou 120 min, ou um valor livre) e os dias da semana em que quer ser lembrado.
-- **Alerta em tela cheia com som:** para você não perder o aviso no meio do trabalho. Dá para marcar "Já bebi" ou adiar 10 minutos.
+- **Alerta em tela cheia com som:** para você não perder o aviso no meio do trabalho. Dá para marcar "Já bebi" ou adiar 10 minutos. O som pode ser o bipe padrão ou um arquivo `.mp4` escolhido por você.
 - **Bater o ponto:** lembretes para as marcações da empresa, com a pergunta "Você é CLT?". CLT tem mínimo de 4 batidas; sem CLT, o mínimo é 2. Você escolhe os horários, os dias e quantos minutos antes quer ser avisado.
 - **Relatórios:** um calendário do mês em que cada dia fica verde (meta batida), amarelo (bebeu, mas não bateu) ou vermelho (sem registro). Dá para ver quanto bebeu, quantos copos, quantos lembretes foram atendidos e quantos passaram.
 - **Funciona offline:** tudo fica salvo no seu computador.
+- **Três idiomas:** português (padrão), inglês e espanhol, escolhidos em Configurações.
 - **Fica na bandeja do sistema:** fechar a janela não para os lembretes. Para encerrar, use **Sair** no menu do ícone.
 
 ## Baixar
 
 Os instaladores ficam na página de releases:
 
-- **Ubuntu (.deb):** [agua-lembrete_0.3.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.3.0/agua-lembrete_0.3.0_amd64.deb)
-- **Windows (.exe):** [agua-setup-0.3.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.3.0/agua-setup-0.3.0.exe)
+- **Ubuntu (.deb):** [agua-lembrete_0.4.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.4.0/agua-lembrete_0.4.0_amd64.deb)
+- **Windows (.exe):** [agua-setup-0.4.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.4.0/agua-setup-0.4.0.exe)
 
 Todas as versões: [releases](https://github.com/wesurex/lembrete-agua/releases).
 
 ### Instalar no Ubuntu
 
 ```bash
-sudo apt install ./agua-lembrete_0.3.0_amd64.deb
+sudo apt install ./agua-lembrete_0.4.0_amd64.deb
 ```
 
 Depois, procure **Água** no menu de aplicativos.
 
 ### Instalar no Windows
 
-Rode `agua-setup-0.3.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
+Rode `agua-setup-0.4.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
 
 Ao instalar uma versão nova, a anterior é atualizada no lugar. Antes, feche o app pelo **Sair** na bandeja.
 
@@ -71,9 +72,11 @@ A política de assinatura está em [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.
 
 ## Status
 
-Versão 0.3.0.
+Versão 0.4.0.
 
-Incluído nesta versão: abrir com o computador (Windows e Ubuntu), som e tela cheia configuráveis, fila de alertas (água e ponto não se perdem), tolerância de 1 minuto para lembretes atrasados e atualização automática no Windows.
+Novidades desta versão: app em português, inglês e espanhol; som do alerta a partir de um arquivo `.mp4`; horários com máscara ao digitar (0530 vira 05:30) e o relógio ao lado; menu lateral fixo; cores novas e relatórios em tons pastel.
+
+Já incluído antes: abrir com o computador (Windows e Ubuntu), som e tela cheia configuráveis, fila de alertas (água e ponto não se perdem), tolerância de 1 minuto para lembretes atrasados e atualização automática no Windows.
 
 Ainda não tem:
 

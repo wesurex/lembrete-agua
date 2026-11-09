@@ -1,12 +1,17 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, screen, powerMonitor } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, screen, powerMonitor, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { pathToFileURL } = require('url');
 const { autoUpdater } = require('electron-updater');
+const I18N = require('./i18n.js');
+const T = (key, vars) => I18N.t(CFG.lang, key, vars); // texto no idioma escolhido (padrão: pt-BR)
 
 const DEFAULTS = {
   start: '06:30', end: '16:18', iv: 60, goalMl: 2500,
   days: [false, true, true, true, true, true, false],
   autostart: false, sound: true, visual: true,
+  lang: I18N.DEFAULT_LANG, // 'pt-BR', 'en-US' ou 'es'
+  alertSound: null, // { name } quando o usuário escolheu um .mp4; o arquivo fica em userData/alert-sound.mp4
   ponto: { enabled: false, clt: true, times: ['08:00', '12:00', '13:00', '17:00'], leadMin: 5, days: [false, true, true, true, true, true, false] }
 };
 const SNOOZE_MS = 10 * 60 * 1000;
@@ -17,6 +22,13 @@ const UPDATE_EVERY_MS = 6 * 60 * 60 * 1000;
 let CFG = { ...DEFAULTS };
 let history = []; // eventos: { t, type: 'fired' | 'drink', ml?, fromAlert?, goalMl? }
 const dataFile = name => path.join(app.getPath('userData'), name);
+const SOUND_FILE = () => dataFile('alert-sound.mp4');
+const SOUND_MAX_BYTES = 10 * 1024 * 1024;
+
+function saveConfigFile() {
+  fs.mkdirSync(app.getPath('userData'), { recursive: true });
+  fs.writeFileSync(dataFile('config.json'), JSON.stringify(CFG, null, 2));
+}
 
 function loadConfig() {
   try {
@@ -24,6 +36,7 @@ function loadConfig() {
     // ponto é mesclado campo a campo: configs antigas não têm "days" dentro de ponto
     CFG = { ...DEFAULTS, ...saved, ponto: { ...DEFAULTS.ponto, ...(saved.ponto || {}) } };
   } catch (e) { CFG = { ...DEFAULTS }; }
+  if (!I18N.LANGS.includes(CFG.lang)) CFG.lang = I18N.DEFAULT_LANG;
 }
 function loadHistory() {
   try { history = JSON.parse(fs.readFileSync(dataFile('history.json'), 'utf8')); } catch (e) { history = []; }
@@ -37,28 +50,29 @@ function record(ev) {
 // Valida antes de salvar: o que vem da tela de configuração não é confiável por padrão
 function validate(c) {
   const hhmm = /^([01]\d|2[0-3]):[0-5]\d$/;
-  if (!hhmm.test(c.start) || !hhmm.test(c.end)) return { ok: false, error: 'Horário inválido' };
-  if (toM(c.start) >= toM(c.end)) return { ok: false, error: 'O início precisa ser antes do fim' };
+  const fail = (key, vars) => ({ ok: false, error: T(key, vars) });
+  if (!hhmm.test(c.start) || !hhmm.test(c.end)) return fail('err.time');
+  if (toM(c.start) >= toM(c.end)) return fail('err.order');
   const iv = Number(c.iv);
-  if (!(iv >= 5 && iv <= 480)) return { ok: false, error: 'Intervalo entre 5 e 480 minutos' };
+  if (!(iv >= 5 && iv <= 480)) return fail('err.iv');
   const goalMl = Number(c.goalMl);
-  if (!(goalMl >= 500 && goalMl <= 6000)) return { ok: false, error: 'Meta entre 500 e 6000 ml' };
-  if (!Array.isArray(c.days) || c.days.length !== 7) return { ok: false, error: 'Dias inválidos' };
-  if (!c.days.some(Boolean)) return { ok: false, error: 'Escolha pelo menos um dia' };
+  if (!(goalMl >= 500 && goalMl <= 6000)) return fail('err.goal');
+  if (!Array.isArray(c.days) || c.days.length !== 7) return fail('err.days');
+  if (!c.days.some(Boolean)) return fail('err.oneDay');
 
   // Bater ponto: CLT precisa de pelo menos 4 batidas; sem CLT, pelo menos 2
   const p = c.ponto || {};
   const pTimes = Array.isArray(p.times) ? p.times : [];
-  if (pTimes.some(t => !hhmm.test(t))) return { ok: false, error: 'Horário do ponto inválido' };
+  if (pTimes.some(t => !hhmm.test(t))) return fail('err.pTime');
   const times = [...new Set(pTimes)].sort((a, b) => toM(a) - toM(b));
   const leadMin = Number(p.leadMin);
-  if (!(leadMin >= 0 && leadMin <= 30)) return { ok: false, error: 'Aviso do ponto entre 0 e 30 minutos' };
-  if (!Array.isArray(p.days) || p.days.length !== 7) return { ok: false, error: 'Dias do ponto inválidos' };
+  if (!(leadMin >= 0 && leadMin <= 30)) return fail('err.pLead');
+  if (!Array.isArray(p.days) || p.days.length !== 7) return fail('err.pDays');
   const pDays = p.days.map(Boolean);
   if (p.enabled) {
     const min = p.clt ? 4 : 2;
-    if (times.length < min || times.length > 10) return { ok: false, error: `Ponto: informe de ${min} a 10 horários` };
-    if (!pDays.some(Boolean)) return { ok: false, error: 'Escolha pelo menos um dia para o ponto' };
+    if (times.length < min || times.length > 10) return fail('err.pCount', { min });
+    if (!pDays.some(Boolean)) return fail('err.pOneDay');
   }
 
   return {
@@ -66,6 +80,8 @@ function validate(c) {
     cfg: {
       start: c.start, end: c.end, iv, goalMl, days: c.days.map(Boolean),
       autostart: !!c.autostart, sound: c.sound !== false, visual: c.visual !== false,
+      lang: CFG.lang, // o idioma é salvo à parte, ao clicar no seletor
+      alertSound: CFG.alertSound || null,
       ponto: { enabled: !!p.enabled, clt: !!p.clt, times, leadMin, days: pDays }
     }
   };
@@ -143,8 +159,10 @@ function openAlert(real = false, ponto = null) {
     }
   });
   alertWin.setAlwaysOnTop(true, 'screen-saver');
-  const query = { sound: CFG.sound ? '1' : '0' };
+  const query = { sound: CFG.sound ? '1' : '0', lang: CFG.lang };
   if (ponto) query.ponto = ponto;
+  // Som escolhido pelo usuário (.mp4); se o arquivo sumiu, a tela toca o bipe padrão
+  if (CFG.alertSound && fs.existsSync(SOUND_FILE())) query.src = pathToFileURL(SOUND_FILE()).href;
   alertWin.loadFile(path.join(__dirname, 'alert.html'), { query });
   alertWin.once('ready-to-show', () => { alertWin.show(); alertWin.focus(); });
   alertWin.on('closed', () => {
@@ -196,15 +214,20 @@ function tick() {
   }
 }
 
+// Menu da bandeja no idioma atual; é refeito quando o idioma muda
+function buildTrayMenu() {
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: T('tray.open'), click: openMain },
+    { label: T('testAlert'), click: () => openAlert(false) },
+    { type: 'separator' },
+    { label: T('tray.quit'), click: () => app.quit() }
+  ]));
+}
+
 function createTray() {
   tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'tray.png')));
   tray.setToolTip('Água');
-  tray.setContextMenu(Menu.buildFromTemplate([
-    { label: 'Abrir', click: openMain },
-    { label: 'Testar alerta', click: () => openAlert(false) },
-    { type: 'separator' },
-    { label: 'Sair', click: () => app.quit() }
-  ]));
+  buildTrayMenu();
   // Duplo clique só existe no Windows; no Ubuntu a entrada é o item "Abrir" do menu
   tray.on('double-click', openMain);
 }
@@ -222,7 +245,7 @@ ipcMain.handle('config:get', () => CFG);
 ipcMain.handle('config:save', (_e, c) => {
   const r = validate(c);
   if (!r.ok) return r;
-  try { applyAutostart(r.cfg.autostart); } catch (e) { return { ok: false, error: 'Não consegui ajustar a inicialização automática' }; }
+  try { applyAutostart(r.cfg.autostart); } catch (e) { return { ok: false, error: T('err.autostart') }; }
   CFG = r.cfg;
   fs.mkdirSync(app.getPath('userData'), { recursive: true });
   fs.writeFileSync(dataFile('config.json'), JSON.stringify(CFG, null, 2));
@@ -245,6 +268,33 @@ ipcMain.on('ponto:snooze', () => {
   setTimeout(() => openAlert(false, horario), PONTO_SNOOZE_MS);
 });
 ipcMain.on('alert:test', () => openAlert(false));
+
+ipcMain.handle('sound:pick', async () => {
+  const opts = { title: T('dlg.sound'), properties: ['openFile'], filters: [{ name: T('dlg.filter'), extensions: ['mp4'] }] };
+  const r = mainWin ? await dialog.showOpenDialog(mainWin, opts) : await dialog.showOpenDialog(opts);
+  if (r.canceled || !r.filePaths.length) return { ok: false, canceled: true };
+  const src = r.filePaths[0];
+  if (fs.statSync(src).size > SOUND_MAX_BYTES) return { ok: false, error: T('err.soundSize') };
+  fs.mkdirSync(app.getPath('userData'), { recursive: true });
+  fs.copyFileSync(src, SOUND_FILE());
+  CFG.alertSound = { name: path.basename(src) };
+  saveConfigFile();
+  return { ok: true, name: CFG.alertSound.name };
+});
+// Idioma: aplica na hora (janela, bandeja e próximos alertas) e fica salvo
+ipcMain.handle('lang:set', (_e, lang) => {
+  if (!I18N.LANGS.includes(lang)) return { ok: false };
+  CFG.lang = lang;
+  saveConfigFile();
+  if (tray) buildTrayMenu();
+  return { ok: true };
+});
+ipcMain.handle('sound:clear', () => {
+  fs.rmSync(SOUND_FILE(), { force: true });
+  CFG.alertSound = null;
+  saveConfigFile();
+  return { ok: true };
+});
 
 // Abrir o app de novo (ícone no menu de apps ou npm start) mostra a janela
 app.on('second-instance', openMain);

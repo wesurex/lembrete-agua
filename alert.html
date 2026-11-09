@@ -7,30 +7,32 @@
 <style>
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
-  body{font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:#111;
-       display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center}
+  body{font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#0f2a3d;
+       background:radial-gradient(900px 500px at 50% -10%,#bfeaf8 0%,transparent 65%),linear-gradient(180deg,#eef9fd 0%,#ffffff 100%);
+       display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px}
   svg{width:140px;height:198px}
   #clock{width:160px;height:160px}
   h1{font-size:44px;font-weight:800;letter-spacing:-.03em;margin:8px 0 0}
-  p{margin:0;color:#6b6b6b;font-size:18px}
-  .row{display:flex;gap:12px;margin-top:24px}
-  button{font:inherit;font-weight:600;font-size:17px;padding:14px 26px;border-radius:99px;border:1px solid #111;background:#fff;color:#111;cursor:pointer}
-  button.dark{background:#111;color:#fff}
-  button:hover{opacity:.85}
+  p{margin:0;color:#5b7283;font-size:18px}
+  .row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  button{font:inherit;font-weight:600;font-size:17px;padding:14px 26px;border-radius:99px;border:1px solid #cfe3ea;background:#fff;color:#0f2a3d;cursor:pointer}
+  button.dark{background:#1b8fc0;border-color:#1b8fc0;color:#fff}
+  button:hover{opacity:.88}
+  @media (max-width:520px){h1{font-size:32px}}
 </style>
 </head>
 <body>
   <svg id="glass" viewBox="0 0 120 170" aria-hidden="true">
     <defs><clipPath id="cp"><path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z"/></clipPath></defs>
-    <g clip-path="url(#cp)"><rect x="0" y="72" width="120" height="110" fill="#cdeaf7"/>
-      <path d="M-30 72q15-8 30 0t30 0t30 0t30 0t30 0t30 0V170H-30z" fill="#8fd0ee"/></g>
-    <path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z" fill="none" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M52 4h16" stroke="#111" stroke-width="2.5" stroke-linecap="round"/>
+    <g clip-path="url(#cp)"><rect x="0" y="72" width="120" height="110" fill="#bfeaf8"/>
+      <path d="M-30 72q15-8 30 0t30 0t30 0t30 0t30 0t30 0V170H-30z" fill="#38c4ea"/></g>
+    <path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z" fill="none" stroke="#0f2a3d" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M52 4h16" stroke="#0f2a3d" stroke-width="2.5" stroke-linecap="round"/>
   </svg>
   <svg id="clock" viewBox="0 0 160 160" aria-hidden="true" style="display:none">
-    <circle cx="80" cy="80" r="70" fill="#cdeaf7" stroke="#111" stroke-width="3"/>
-    <path d="M80 30v50l34 20" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="80" cy="80" r="5" fill="#111"/>
+    <circle cx="80" cy="80" r="70" fill="#e7e4ff" stroke="#0f2a3d" stroke-width="3"/>
+    <path d="M80 30v50l34 20" fill="none" stroke="#7c6cf0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="80" cy="80" r="6" fill="#0f2a3d"/>
   </svg>
   <h1 id="title">Hora de beber água</h1>
   <p id="sub">Um copo agora ajuda a manter a meta do dia.</p>
@@ -38,36 +40,63 @@
     <button id="b1" class="dark">Já bebi</button>
     <button id="b2">Adiar 10 min</button>
   </div>
+<script src="i18n.js"></script>
 <script>
+  const params = new URLSearchParams(location.search);
+  const lang = I18N.LANGS.includes(params.get('lang')) ? params.get('lang') : I18N.DEFAULT_LANG;
+  const T = (key, vars) => I18N.t(lang, key, vars);
+  document.documentElement.lang = lang;
+  const $ = id => document.getElementById(id);
+
   // Se veio um horário de ponto na URL, mostra o alerta de ponto; senão, o de água
-  const ponto = new URLSearchParams(location.search).get('ponto');
+  const ponto = params.get('ponto');
   if (ponto) {
-    document.getElementById('glass').style.display = 'none';
-    document.getElementById('clock').style.display = '';
-    document.getElementById('title').textContent = 'Hora de bater o ponto';
-    document.getElementById('sub').textContent = `Marcação das ${ponto}. Bata agora.`;
-    document.getElementById('b1').textContent = 'Já bati';
-    document.getElementById('b1').onclick = () => window.agua.pontoDone();
-    document.getElementById('b2').textContent = 'Adiar 5 min';
-    document.getElementById('b2').onclick = () => window.agua.pontoSnooze();
+    $('glass').style.display = 'none';
+    $('clock').style.display = '';
+    $('title').textContent = T('al.ponto.title');
+    $('sub').textContent = T('al.ponto.sub', { t: ponto });
+    $('b1').textContent = T('al.ponto.done');
+    $('b1').onclick = () => window.agua.pontoDone();
+    $('b2').textContent = T('al.ponto.snooze');
+    $('b2').onclick = () => window.agua.pontoSnooze();
   } else {
-    document.getElementById('b1').onclick = () => window.agua.drink();
-    document.getElementById('b2').onclick = () => window.agua.snooze();
+    $('title').textContent = T('al.water.title');
+    $('sub').textContent = T('al.water.sub');
+    $('b1').textContent = T('al.water.done');
+    $('b1').onclick = () => window.agua.drink();
+    $('b2').textContent = T('al.water.snooze');
+    $('b2').onclick = () => window.agua.snooze();
   }
 
-  // Som de alerta gerado pelo próprio navegador (sem arquivo de áudio); pode ser desligado nas configurações
-  if (new URLSearchParams(location.search).get('sound') !== '0') try {
-    const c = new (window.AudioContext || window.webkitAudioContext)();
-    c.resume();
-    [0, 0.45].forEach(t => {
-      const o = c.createOscillator(), g = c.createGain();
-      o.frequency.value = 880; o.connect(g); g.connect(c.destination);
-      g.gain.setValueAtTime(0.0001, c.currentTime + t);
-      g.gain.exponentialRampToValueAtTime(0.3, c.currentTime + t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t + 0.4);
-      o.start(c.currentTime + t); o.stop(c.currentTime + t + 0.42);
-    });
-  } catch (e) {}
+  // Bipe padrão gerado pelo próprio navegador (sem arquivo de áudio)
+  function beep() {
+    try {
+      const c = new (window.AudioContext || window.webkitAudioContext)();
+      c.resume();
+      [0, 0.45].forEach(t => {
+        const o = c.createOscillator(), g = c.createGain();
+        o.frequency.value = 880; o.connect(g); g.connect(c.destination);
+        g.gain.setValueAtTime(0.0001, c.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.3, c.currentTime + t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t + 0.4);
+        o.start(c.currentTime + t); o.stop(c.currentTime + t + 0.42);
+      });
+    } catch (e) {}
+  }
+
+  // Som: desligado nas configurações → nada; .mp4 escolhido → toca o arquivo; falhou → bipe
+  if (params.get('sound') !== '0') {
+    const src = params.get('src');
+    if (src) {
+      const audio = new Audio(src);
+      let fell = false;
+      const fallback = () => { if (!fell) { fell = true; beep(); } };
+      audio.onerror = fallback;
+      audio.play().catch(fallback);
+    } else {
+      beep();
+    }
+  }
 </script>
 </body>
 </html>
