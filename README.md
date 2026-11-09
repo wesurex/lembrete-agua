@@ -17,22 +17,22 @@ Para quem tem rotina corrida: você configura os horários uma vez e esquece. Qu
 
 Os instaladores ficam na página de releases:
 
-- **Ubuntu (.deb):** [agua-lembrete_0.2.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.2.0/agua-lembrete_0.2.0_amd64.deb)
-- **Windows (.exe):** [agua-setup-0.2.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.2.0/agua-setup-0.2.0.exe)
+- **Ubuntu (.deb):** [agua-lembrete_0.3.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.3.0/agua-lembrete_0.3.0_amd64.deb)
+- **Windows (.exe):** [agua-setup-0.3.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.3.0/agua-setup-0.3.0.exe)
 
 Todas as versões: [releases](https://github.com/wesurex/lembrete-agua/releases).
 
 ### Instalar no Ubuntu
 
 ```bash
-sudo apt install ./agua-lembrete_0.2.0_amd64.deb
+sudo apt install ./agua-lembrete_0.3.0_amd64.deb
 ```
 
 Depois, procure **Água** no menu de aplicativos.
 
 ### Instalar no Windows
 
-Rode `agua-setup-0.2.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
+Rode `agua-setup-0.3.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
 
 Ao instalar uma versão nova, a anterior é atualizada no lugar. Antes, feche o app pelo **Sair** na bandeja.
 
