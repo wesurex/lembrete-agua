@@ -38,6 +38,7 @@ const DEFAULTS = {
   alertSound: null, // { name } quando o usuário escolheu um .mp4; o arquivo fica em userData/alert-sound.mp4
   ponto: { enabled: false, clt: true, times: ['08:00', '12:00', '13:00', '17:00'], leadMin: 5, days: [false, true, true, true, true, true, false] }
 };
+const APP_TITLE = 'WRS Tools'; // nome que a pessoa vê; o nome interno (pasta de dados, executável) continua o antigo
 const SNOOZE_MS = 10 * 60 * 1000;
 const THEMES = ['system', 'light', 'dark'];
 // O tema vale para todas as janelas: o Chromium passa a responder prefers-color-scheme conforme a escolha
@@ -203,7 +204,7 @@ function applyAutostart(on) {
     const exec = app.isPackaged ? `"${process.execPath}"` : `"${process.execPath}" "${app.getAppPath()}"`;
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, [
-      '[Desktop Entry]', 'Type=Application', 'Name=Água',
+      '[Desktop Entry]', 'Type=Application', 'Name=' + APP_TITLE,
       'Comment=Lembrete para beber água e bater o ponto',
       `Exec=${exec} --background`, 'Terminal=false', 'X-GNOME-Autostart-enabled=true', ''
     ].join('\n'));
@@ -272,7 +273,7 @@ function closeAlert() {
 function openMain() {
   if (mainWin) { mainWin.show(); mainWin.focus(); return; }
   mainWin = new BrowserWindow({
-    width: 1120, height: 760, minWidth: 880, minHeight: 600, title: 'Água', autoHideMenuBar: true,
+    width: 1120, height: 760, minWidth: 880, minHeight: 600, title: APP_TITLE, autoHideMenuBar: true,
     backgroundColor: windowBg('#eef7fb', '#0b1620'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -322,7 +323,7 @@ function buildTrayMenu() {
 
 function createTray() {
   tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'tray.png')));
-  tray.setToolTip('Água');
+  tray.setToolTip(APP_TITLE);
   buildTrayMenu();
   // Duplo clique só existe no Windows; no Ubuntu a entrada é o item "Abrir" do menu
   tray.on('double-click', openMain);

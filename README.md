@@ -1,6 +1,6 @@
-# Água · lembretes para o seu dia
+# WRS Tools · lembretes para o seu dia
 
-Um app pequeno que fica na bandeja do computador e organiza o seu dia: lembra de beber água e de bater o ponto, registra suas horas, guarda seus compromissos e tarefas. Sem conta e sem depender de internet.
+WRS Tools (antes chamado Água) é um app pequeno que fica na bandeja do computador e organiza o seu dia: lembra de beber água e de bater o ponto, registra suas horas, guarda seus compromissos e tarefas. Sem conta e sem depender de internet.
 
 Para quem tem rotina corrida: você configura uma vez e esquece. Quando chega a hora, aparece um aviso com som. Você responde e segue o dia. Nada de cadastro nem sincronização com ninguém.
 
@@ -28,22 +28,22 @@ Tudo fica salvo no seu computador. A única parte que usa internet é o clima, e
 
 Os instaladores ficam na página de releases:
 
-- **Ubuntu (.deb):** [agua-lembrete_0.5.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.5.0/agua-lembrete_0.5.0_amd64.deb)
-- **Windows (.exe):** [agua-setup-0.5.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.5.0/agua-setup-0.5.0.exe)
+- **Ubuntu (.deb):** [agua-lembrete_0.6.0_amd64.deb](https://github.com/wesurex/lembrete-agua/releases/download/v0.6.0/agua-lembrete_0.6.0_amd64.deb)
+- **Windows (.exe):** [agua-setup-0.6.0.exe](https://github.com/wesurex/lembrete-agua/releases/download/v0.6.0/agua-setup-0.6.0.exe)
 
 Todas as versões: [releases](https://github.com/wesurex/lembrete-agua/releases).
 
 ### Instalar no Ubuntu
 
 ```bash
-sudo apt install ./agua-lembrete_0.5.0_amd64.deb
+sudo apt install ./agua-lembrete_0.6.0_amd64.deb
 ```
 
-Depois, procure **Água** no menu de aplicativos.
+Depois, procure **WRS Tools** no menu de aplicativos.
 
 ### Instalar no Windows
 
-Rode `agua-setup-0.5.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
+Rode `agua-setup-0.6.0.exe`. Como o instalador não é assinado, o Windows pode mostrar um aviso do SmartScreen: clique em **Mais informações** e depois em **Executar mesmo assim**.
 
 Ao instalar uma versão nova, a anterior é atualizada no lugar. Antes, feche o app pelo **Sair** na bandeja. A partir da 0.3.0, o Windows atualiza sozinho.
 
@@ -92,9 +92,11 @@ A política de assinatura está em [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.
 
 ## Status
 
-Versão 0.5.0.
+Versão 0.6.0.
 
-Novidades desta versão:
+Novidade desta versão: o app passa a se chamar WRS Tools na janela, na bandeja, nos atalhos e na lista de programas instalados. Os arquivos de instalação e o nome interno continuam com "agua", para a atualização funcionar por cima da versão anterior sem perder dados.
+
+Incluído na 0.5.0:
 - painel do dia configurável;
 - horas com check-in e check-out e exportação CSV;
 - agenda de compromissos;

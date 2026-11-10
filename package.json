@@ -1,14 +1,15 @@
 {
   "name": "agua-lembrete",
-  "version": "0.5.0",
-  "description": "Lembretes de água e de ponto, horas, agenda e tarefas, para quem tem rotina corrida",
+  "version": "0.6.0",
+  "description": "WRS Tools: lembretes de água e de ponto, horas, agenda e tarefas para quem trabalha no computador",
   "private": true,
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "electron . --test",
     "dist": "electron-builder --linux deb --win nsis --publish never",
-    "dist:win": "electron-builder --win nsis --publish never"
+    "dist:win": "electron-builder --win nsis --publish never",
+    "shots": "electron scripts/screenshots.js --background"
   },
   "devDependencies": {
     "electron": "^45.2.3",
@@ -42,7 +43,12 @@
       ],
       "category": "Utility",
       "icon": "build/icon.png",
-      "maintainer": "Wesley <agua@localhost>"
+      "maintainer": "Wesley <agua@localhost>",
+      "desktop": {
+        "entry": {
+          "Name": "WRS Tools"
+        }
+      }
     },
     "win": {
       "target": [
@@ -54,7 +60,9 @@
       "oneClick": true,
       "perMachine": false,
       "runAfterFinish": false,
-      "artifactName": "agua-setup-${version}.${ext}"
+      "artifactName": "agua-setup-${version}.${ext}",
+      "shortcutName": "WRS Tools",
+      "uninstallDisplayName": "WRS Tools ${version}"
     }
   },
   "homepage": "https://localhost",
