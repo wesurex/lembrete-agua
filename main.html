@@ -31,7 +31,7 @@
   nav button:hover{background:var(--aqua-soft);color:var(--ink)}
   nav button.on{background:linear-gradient(135deg,#0f2a3d,#1d4e6b);color:#fff}
   .foot{margin-top:auto;padding:12px;font-size:12px;color:var(--ink2)}
-  main{padding:32px 36px;max-width:1180px;width:100%}
+  main{padding:32px 36px;max-width:1180px;width:100%;margin:0 auto} /* centralizado na área ao lado do menu */
   h1{font-size:34px;font-weight:800;margin:4px 0 0;letter-spacing:-.03em;color:var(--ink)}
   h2{font-size:16px;margin:0 0 4px;color:var(--ink)}
   h3{font-size:16px;margin:0 0 10px}
@@ -146,7 +146,82 @@
   .trow .tfield{flex:1;max-width:240px}
   .sound-now{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--violet-soft);color:var(--ink);margin-top:12px}
   .sound-now .ic{color:var(--violet)}
+  /* Configurações em colunas: cada cartão encaixa logo abaixo do anterior, sem buracos */
+  .cfg-cols{columns:2;column-gap:20px}
+  .cfg-cols > .card{break-inside:avoid;margin:0 0 20px}
+  .cfg-cols > .span-all{column-span:all}
+  /* Tela inicial configurável */
+  .dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;grid-auto-flow:row dense;align-items:stretch}
+  .w{display:flex;flex-direction:column;min-width:0}
+  .w > *{flex:1}
+  .w-wide{grid-column:1/-1}
+  .dash .kpis{margin-bottom:0}
+  .w:not(.w-wide) .kpis{grid-template-columns:1fr 1fr}
+  .w-hours.on{background:linear-gradient(135deg,#d3f6e6 0%,#ffffff 75%);border-color:transparent}
+  .hwlist{list-style:none;margin:12px 0 0;padding:0}
+  .hw{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:grab}
+  .hw.over{border-color:var(--aqua);background:var(--aqua-soft)}
+  .hw.off .hw-name{color:#9fb3be}
+  .hw .grip{color:#9fb3be;letter-spacing:-2px;font-weight:800}
+  .hw-num{width:24px;height:24px;border-radius:8px;background:var(--aqua-soft);color:var(--aqua-deep);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .hw-name{flex:1;font-weight:600}
+  .chip.sm{padding:5px 10px;font-size:12px}
+  .xbtn:disabled{opacity:.3;cursor:default;background:none}
+  /* Agenda e tarefas */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px;align-items:center}
+  .form-grid .span2{grid-column:span 2}
+  .ev-day{margin-top:14px}
+  .ev-day h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin:0 0 6px}
+  .evlist,.tasks{list-style:none;margin:0;padding:0}
+  .ev{display:flex;align-items:flex-start;gap:14px;padding:12px 14px;border-radius:14px;background:var(--coral-soft);margin-bottom:8px}
+  .ev-time{font-weight:800;font-variant-numeric:tabular-nums;font-size:18px;color:#c0431f;min-width:56px}
+  .ev-body{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .ev-body small{color:var(--ink2)}
+  .ev-lead{display:inline-flex;align-items:center;gap:4px}
+  .ev-lead .ic{width:14px;height:14px}
+  .past .ev{background:#f2f6f8}
+  .past .ev-time{color:var(--ink2)}
+  .task{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+  .task:first-child{border-top:0}
+  .task-title{flex:1;min-width:0}
+  .task.done .task-title{color:#9fb3be;text-decoration:line-through}
+  .chk{width:26px;height:26px;flex:none;border-radius:8px;border:2px solid #b9cfd9;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:#fff}
+  .chk.on{background:var(--mint);border-color:var(--mint)}
+  .chk .ic{width:16px;height:16px}
+  .due{font-size:12px;color:var(--ink2);white-space:nowrap}
+  .due.late{color:var(--red-ink);font-weight:700}
+  /* aviso rápido no canto ("Salvo", erros de validação) */
+  .toast{position:fixed;right:24px;bottom:24px;max-width:420px;padding:12px 18px;border-radius:14px;background:var(--ink);color:#fff;
+         font-weight:600;box-shadow:0 10px 28px rgba(15,42,61,.25);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:20}
+  .toast.show{opacity:1;transform:none}
+  .toast.err{background:#c92a2a}
+  /* Horas: check-in/check-out */
+  .clock-card{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+  .clock-card.on{background:linear-gradient(135deg,#d3f6e6 0%,#ffffff 75%);border-color:transparent}
+  .timer{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+  .clock-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .wide{width:min(320px,100%);border-radius:12px;padding:11px 14px}
+  .btn.big{padding:14px 26px;font-size:16px}
+  .btn.mint{background:#14915d;border-color:#14915d;color:#fff}
+  .btn.coral{background:#d9502c;border-color:#d9502c;color:#fff}
+  .tbl-wrap{overflow-x:auto}
+  .tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  .tbl th{text-align:left;font-size:12px;color:var(--ink2);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+  .tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .tbl td.note{color:var(--ink2);max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tbl tfoot td{font-weight:800;border-bottom:0}
+  .tbl .open{color:#14915d;font-weight:600}
+  .xbtn{border:0;background:none;color:var(--ink2);cursor:pointer;font-size:18px;line-height:1;padding:4px 8px;border-radius:8px}
+  .xbtn:hover{background:var(--red);color:var(--red-ink)}
+  .addrow{display:grid;grid-template-columns:170px 150px 150px 1fr auto;gap:10px;align-items:center;margin-top:12px}
+  .dinput{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);width:100%}
+  @media (max-width:1100px){ .addrow{grid-template-columns:1fr 1fr} }
   @media (max-width:820px){
+    .addrow{grid-template-columns:1fr}
+    .form-grid{grid-template-columns:1fr}
+    .dash{grid-template-columns:1fr}
+    .cfg-cols{columns:1}
+    .form-grid .span2{grid-column:auto}
     .app{grid-template-columns:1fr}
     aside{flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:12px;border-right:0;border-bottom:1px solid var(--line);align-items:center;height:auto}
     .brand{padding:0 8px 0 0;white-space:nowrap}
@@ -160,6 +235,71 @@
     .grid3{grid-template-columns:1fr}
     .fields{grid-template-columns:1fr}
   }
+  /* ---------- Tema claro/escuro ----------
+     As cores ficam em variáveis; o modo escuro só troca os valores.
+     O processo principal define nativeTheme.themeSource, então prefers-color-scheme segue a escolha. */
+  :root{color-scheme:light;--aqua-deep:#167aa6;--accent-bg:#167aa6;--surface:#ffffff;--surface-2:#f2f6f8;--muted-2:#9fb3be;--line-strong:#b9cfd9;--switch-off:#d7e4ea;
+        --track:rgba(15,42,61,.10);--sel-bg:#0f2a3d;--hero-from:#e3f6fc;--body-glow:#d6f2fb;--blue-from:#d6f2fb;--blue-to:#b9e8f8;
+        --aqua-text:#14698d;--coral-text:#a8381a;--sun-text:#b98200;--mint-text:#127a4f;--violet-text:#5a49d6}
+  @media (prefers-color-scheme:dark){
+    :root{color-scheme:dark;
+      --ink:#e6f1f6;--ink2:#93abb8;--line:#23384a;--bg:#0b1620;--card:#12212d;--surface:#12212d;--surface-2:#182b39;
+      --muted-2:#7890a1;--line-strong:#3a566a;--switch-off:#2a3f50;--track:rgba(255,255,255,.12);--sel-bg:#14709a;
+      --accent-bg:#14709a;--aqua-deep:#5cc4ea; /* fundo de botão com texto branco ≠ cor de texto de destaque */
+      --hero-from:#143041;--body-glow:#0f2f40;--blue-from:#123a4d;--blue-to:#0f3142;
+      --aqua-soft:#12384a;--coral-soft:#3a2420;--sun-soft:#3a3016;--mint-soft:#133a2b;--violet-soft:#26244a;
+      --aqua-text:#7fd3f2;--coral-text:#ff9f80;--sun-text:#f5c451;--mint-text:#6fe0a8;--violet-text:#b3a9ff;
+      --green:#173d27;--green-line:#2a6b44;--green-ink:#8ee0aa;--yellow:#3d3213;--yellow-line:#7a6320;--yellow-ink:#f5d77a;
+      --red:#3f1d1d;--red-line:#7a3434;--red-ink:#ff9d9d}
+    nav button.on{background:var(--sel-bg)}
+    .card{box-shadow:none}
+  }
+  body{background:radial-gradient(1200px 600px at 100% -10%,var(--body-glow) 0%,transparent 60%),var(--bg)}
+  aside,.btn,.chip,.pill,.nav2 button,.day,.hw,.kicon,.dinput,.tinput,.chip-input,.chk{background-color:var(--surface)}
+  .chip-input,.dinput,.tinput,.nav2 button{color:var(--ink)}
+  .btn.dark,.chip.on{background:var(--sel-bg);border-color:var(--sel-bg);color:#fff}
+  .toast{background:var(--sel-bg)}
+  .hero{background:linear-gradient(135deg,var(--hero-from) 0%,var(--surface) 70%)}
+  .card.blue{background:linear-gradient(160deg,var(--blue-from),var(--blue-to))}
+  .clock-card.on,.w-hours.on{background:linear-gradient(135deg,var(--mint-soft) 0%,var(--surface) 75%)}
+  .bar{background:var(--track)}
+  .arc-bg{stroke:var(--track)}
+  .switch{background:var(--switch-off)}
+  .switch.on{background:var(--accent-bg)}
+  .btn.aqua,.pill.on{background:var(--accent-bg);border-color:var(--accent-bg);color:#fff}
+  .chk{border-color:var(--line-strong)}
+  .chk.on{background:var(--mint);border-color:var(--mint)}
+  .times li.past span,.task.done .task-title,.hw .grip,.hw.off .hw-name,.day.future{color:var(--muted-2)}
+  .past .ev{background:var(--surface-2)}
+  .ev-time,.kpi.coral .kicon{color:var(--coral-text)}
+  .kpi.sun .kicon{color:var(--sun-text)}
+  .kpi.mint .kicon,.tbl .open{color:var(--mint-text)}
+  .stat.water strong{color:var(--aqua-text)}
+  .stat.coral strong{color:var(--coral-text)}
+  .stat.mint strong{color:var(--mint-text)}
+  .stat.violet strong{color:var(--violet-text)}
+  #msg.err{color:var(--red-ink)}
+  .glass{color:var(--ink)}
+  /* Clima */
+  :root{--cloud:#cfdde6}
+  @media (prefers-color-scheme:dark){ :root{--cloud:#4a6273} }
+  .wx-main{display:flex;align-items:center;gap:16px;margin-top:10px}
+  .wx-icon{width:72px;height:72px;flex:none}
+  .wx-temp{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .wx-temp span{font-size:18px;color:var(--ink2);font-weight:600;margin-left:2px}
+  .wx-meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:14px;color:var(--ink2)}
+  .wx-hot{display:flex;align-items:center;gap:8px;margin:12px 0 0;padding:10px 12px;border-radius:12px;background:var(--sun-soft);color:var(--sun-text);font-weight:600}
+  .wx-chip{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 6px;border-radius:99px;border:1px solid var(--line);
+           background:var(--surface);color:var(--ink);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+  .wx-chip:hover{border-color:var(--aqua)}
+  .wx-chip .wx-icon{width:30px;height:30px}
+  .wx-chip strong{font-size:16px}
+  .wx-chip small{color:var(--ink2)}
+  .wx-chip-hot{display:inline-flex;color:var(--sun-text)}
+  .wx-chip-hot .ic{width:16px;height:16px}
+  .wx-results{list-style:none;margin:10px 0 0;padding:0}
+  .wx-results button{width:100%;text-align:left;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer;margin-bottom:6px}
+  .wx-results button:hover{border-color:var(--aqua);background:var(--aqua-soft)}
 </style>
 </head>
 <body>
@@ -173,6 +313,8 @@
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17"/></symbol>
   </defs>
 </svg>
 
@@ -181,6 +323,9 @@
     <div class="brand"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><use href="#i-drop"/></svg>Água</div>
     <nav>
       <button data-v="hoje" class="on" onclick="go('hoje')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg><span data-i18n="nav.today">Hoje</span></button>
+      <button data-v="horas" onclick="go('horas')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg><span data-i18n="nav.hours">Horas</span></button>
+      <button data-v="agenda" onclick="go('agenda')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cal"/></svg><span data-i18n="nav.agenda">Agenda</span></button>
+      <button data-v="tarefas" onclick="go('tarefas')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-list"/></svg><span data-i18n="nav.tasks">Tarefas</span></button>
       <button data-v="rel" onclick="go('rel')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg><span data-i18n="nav.reports">Relatórios</span></button>
       <button data-v="cfg" onclick="go('cfg')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-sliders"/></svg><span data-i18n="nav.settings">Configurações</span></button>
     </nav>
@@ -188,6 +333,7 @@
   </aside>
   <main id="main"></main>
 </div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script src="i18n.js"></script>
 <script>
@@ -202,6 +348,12 @@
 
   let V = 'hoje', R = null, C = null, sel = null, msg = { text: '', err: false };
   let cur = new Date(); cur = new Date(cur.getFullYear(), cur.getMonth(), 1);
+  let TSD = { sessions: [] }; // check-in/check-out vindos do processo principal
+  let draft = { date: keyOf(new Date()), start: '09:00', end: '18:00', note: '' }; // lançamento manual
+  let PL = { events: [], tasks: [] }; // agenda e tarefas vindas do processo principal
+  let evDraft = { title: '', date: keyOf(new Date()), time: '09:00', leadMin: 10, note: '' }; // novo compromisso
+  let tkDraft = { title: '', kind: 'daily', due: '' }; // nova tarefa
+  let WX = null, wxAt = 0, wxResults = null, wxQuery = ''; // clima: última leitura, busca de cidade
 
   // Texto no idioma escolhido (padrão: pt-BR)
   const T = (key, vars) => I18N.t(C && C.lang ? C.lang : I18N.DEFAULT_LANG, key, vars);
@@ -231,8 +383,8 @@
       <defs><clipPath id="cp"><path d="${shape}"/></clipPath></defs>
       <g clip-path="url(#cp)"><g transform="translate(0 ${y})"><g class="wv"><path d="M-30 0q15-8 30 0t30 0t30 0t30 0t30 0t30 0V170H-30z" fill="#38c4ea"/></g></g>
       <rect x="0" y="${y + 30}" width="120" height="140" fill="#bfeaf8"/></g>
-      <path d="${shape}" fill="none" stroke="#0f2a3d" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M52 4h16" stroke="#0f2a3d" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="${shape}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M52 4h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
     </svg>`;
   }
   function ring(v, label) {
@@ -253,6 +405,7 @@
     return `<section class="card kpi ${cls}"><span class="kicon">${ic(icon)}</span><p class="muted" style="margin-top:12px">${label}</p><strong>${val}${unit ? ` <span>${unit}</span>` : ''}</strong></section>`;
   }
 
+  // ---- Hoje: painel de blocos escolhidos em Configurações → Tela inicial ----
   function viewHoje() {
     const now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
     const t = R.days[keyOf(now)] || EMPTY;
@@ -260,62 +413,193 @@
     const ts = times(), nx = ts.find(x => x > nowM), passed = ts.filter(x => x <= nowM).length;
     const st = statusInfo();
     const gp = nx === undefined ? 0 : Math.min(Math.max((nowM - (nx - C.iv)) / C.iv, 0), 1);
-    const rows = ts.map(x => {
-      const c = x < nowM ? 'past' : x === nx ? 'next' : '';
-      const lb = x < nowM ? T('list.past') : x === nx ? T('list.next') : T('list.scheduled');
-      return `<li class="${c}"><span>${fmt(x)}</span><small>${lb}</small></li>`;
-    }).join('') || `<li class="muted">${T('list.empty')}</li>`;
+    const ctx = { nowM, t, goal, p, ts, nx, passed, st, gp };
+    const blocks = (C.home || []).filter(w => w.on && WIDGETS[w.id])
+      .map(w => `<div class="w ${w.wide ? 'w-wide' : ''}">${WIDGETS[w.id](ctx)}</div>`).join('');
     const dt = now.toLocaleDateString(C.lang, { weekday: 'long', day: 'numeric', month: 'long' });
     return `
     <header class="top">
       <div><p class="cap">${dt}</p><h1>${T('nav.today')}</h1></div>
-      <span class="pill ${st.tone}">${st.txt}</span>
+      <div class="row" style="align-items:center">
+        ${wxHeader()}
+        <span class="pill ${st.tone}">${st.txt}</span>
+        <button class="chip" onclick="customizeHome()">${ic('sliders')} ${T('home.customize')}</button>
+      </div>
     </header>
-    <div class="kpis">
-      ${kpi('water', 'drop', T('kpi.water'), t.ml, 'ml')}
-      ${kpi('coral', 'check', T('kpi.glasses'), t.drinks)}
-      ${kpi('sun', 'bell', T('kpi.reminders'), ts.length)}
-      ${kpi('mint', 'clock', T('kpi.answered'), T('of', { a: t.atendidos, b: t.fired }))}
-    </div>
-    <div class="main-grid">
-      <section class="card hero">
-        <svg class="deco" viewBox="0 0 380 260" aria-hidden="true" fill="none" stroke="#38c4ea" stroke-opacity=".35" stroke-width="1.5">
-          <path d="M0 160c60-60 120 40 180-20s110-60 200 10"/>
-          <path d="M0 200c70-50 130 30 190-10s100-50 190 5"/>
-          <path d="M20 120c50-30 100 30 150-5s90-30 160 10"/>
-        </svg>
-        ${glass(p)}
-        <div style="position:relative">
-          <p class="muted">${T('hero.goal')}</p>
-          <div class="big">${t.ml} <span>ml</span></div>
-          <p class="muted">${T('hero.of', { goal, left: Math.max(goal - t.ml, 0) })}</p>
-          <div class="bar"><i style="width:${p * 100}%"></i></div>
-          <div class="row"><button class="btn aqua" onclick="agua.testAlert()">${ic('bell')} ${T('testAlert')}</button></div>
-        </div>
-      </section>
-      <section class="card dark">
-        <h2>${T('progress.title')}</h2>
-        <p class="muted">${st.sub}</p>
-        <div class="rings">
-          ${ring(p, T('ring.goal'))}
-          ${ring(ts.length ? passed / ts.length : 0, T('ring.reminders'))}
-          ${ring(t.fired ? t.atendidos / t.fired : 0, T('ring.answered'))}
-        </div>
-      </section>
-    </div>
-    <div class="grid">
-      <section class="card blue">
-        <h2>${T('next.title')}</h2>
-        <p class="muted">${nx === undefined ? st.txt : T('next.every', { t: fmt(nx), n: C.iv })}</p>
-        ${arc(gp)}
-      </section>
-      <section class="card">
-        <h2>${T('list.title')}</h2>
-        <p class="muted">${T('list.between', { a: C.start, b: C.end })}</p>
-        <ul class="times">${rows}</ul>
-      </section>
-    </div>`;
+    <div class="dash">${blocks || `<section class="card w-wide"><p class="muted">${T('home.empty')}</p></section>`}</div>`;
   }
+
+  // Cada bloco devolve o próprio cartão; a ordem e a largura vêm de C.home
+  // Tipo de tempo a partir do código WMO da Open-Meteo
+  const wxKind = c => (c === 0 ? 'clear' : c <= 2 ? 'partly' : c === 3 ? 'cloudy' : c <= 48 ? 'fog' : c <= 57 ? 'drizzle'
+    : c <= 67 ? 'rainy' : c <= 77 ? 'snow' : c <= 82 ? 'showers' : c <= 86 ? 'snow' : 'storm');
+  function wxIcon(k, day) {
+    const sun = '<circle cx="24" cy="24" r="10" fill="#ffc23d"/><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11.3 11.3l3.5 3.5M33.2 33.2l3.5 3.5M11.3 36.7l3.5-3.5M33.2 14.8l3.5-3.5" stroke="#ffc23d" stroke-width="3" stroke-linecap="round"/>';
+    const moon = '<path d="M30 10a14 14 0 1 0 12 20A11 11 0 0 1 30 10z" fill="#b3a9ff"/>';
+    const cloud = (x, y) => `<path transform="translate(${x} ${y})" d="M20 50h26a10 10 0 0 0 0-20 14 14 0 0 0-27-3A11.5 11.5 0 0 0 20 50z" fill="var(--cloud)"/>`;
+    const drops = '<path d="M24 54l-2 6M34 54l-2 6M44 54l-2 6" stroke="#38c4ea" stroke-width="3" stroke-linecap="round"/>';
+    const body = {
+      clear: day ? `<g transform="translate(8 8)">${sun}</g>` : `<g transform="translate(4 4)">${moon}</g>`,
+      partly: (day ? sun : moon) + cloud(4, 4),
+      cloudy: cloud(0, -2),
+      fog: cloud(0, -6) + '<path d="M12 54h40M18 60h28" stroke="var(--muted-2)" stroke-width="3" stroke-linecap="round"/>',
+      drizzle: cloud(0, -6) + drops, rainy: cloud(0, -6) + drops, showers: cloud(0, -6) + drops,
+      snow: cloud(0, -6) + '<g fill="#9fd4ea"><circle cx="24" cy="57" r="2.5"/><circle cx="34" cy="60" r="2.5"/><circle cx="44" cy="57" r="2.5"/></g>',
+      storm: cloud(0, -6) + '<path d="M34 48l-6 9h6l-4 7 10-11h-6l4-5z" fill="#ffc23d"/>'
+    }[k];
+    return `<svg class="wx-icon" viewBox="0 0 64 64" aria-hidden="true">${body}</svg>`;
+  }
+
+  // Clima compacto no topo da tela Hoje (só aparece com cidade escolhida e leitura disponível)
+  function wxHeader() {
+    if (!WX || !WX.ok) return '';
+    const k = wxKind(WX.code), deg = v => Math.round(v) + '°';
+    const tip = [T('wx.minmax', { a: deg(WX.min), b: deg(WX.max) }), T('wx.rain', { p: WX.rain == null ? 0 : WX.rain }), T('wx.updated', { t: hm(WX.at) })].join(' · ');
+    return `<button class="wx-chip" onclick="goWeather()" title="${tip}" aria-label="${T('w.weather')}: ${deg(WX.temp)}, ${T('wx.' + k)}">
+      ${wxIcon(k, WX.isDay)}<strong>${deg(WX.temp)}</strong><span>${T('wx.' + k)}</span>
+      <small>${esc(String(WX.place || '').split(',')[0])}</small>${WX.max >= (WX.unit === 'f' ? 86 : 30) ? `<span class="wx-chip-hot" title="${T('wx.hot')}">${ic('drop')}</span>` : ''}
+    </button>`;
+  }
+
+  const WIDGETS = {
+    weather: () => {
+      if (!WX || WX.setup) return `<section class="card">
+        <h2>${T('w.weather')}</h2><p class="muted" style="margin-top:8px">${T('wx.setup')}</p>
+        <div style="margin-top:12px"><button class="btn aqua" onclick="goWeather()">${ic('sliders')} ${T('wx.choose')}</button></div></section>`;
+      if (WX.offline) return `<section class="card"><h2>${T('w.weather')}</h2><p class="muted" style="margin-top:8px">${T('wx.offline')}</p></section>`;
+      const k = wxKind(WX.code), deg = v => Math.round(v) + '°';
+      const hot = WX.max >= (WX.unit === 'f' ? 86 : 30);
+      return `<section class="card">
+        <div class="toggle-row"><h2 style="margin:0">${T('w.weather')}</h2><small class="muted">${esc(String(WX.place || '').split(',')[0])}</small></div>
+        <div class="wx-main">${wxIcon(k, WX.isDay)}
+          <div><div class="wx-temp">${deg(WX.temp)}<span>${WX.unit === 'f' ? 'F' : 'C'}</span></div>
+          <p class="muted">${T('wx.' + k)} · ${T('wx.feels', { t: deg(WX.feels) })}</p></div></div>
+        <div class="wx-meta"><span>${T('wx.minmax', { a: deg(WX.min), b: deg(WX.max) })}</span><span>${T('wx.humidity', { h: WX.humidity })}</span><span>${T('wx.rain', { p: WX.rain == null ? 0 : WX.rain })}</span></div>
+        ${hot ? `<p class="wx-hot">${ic('drop')} ${T('wx.hot')}</p>` : ''}
+        <p class="muted" style="font-size:12px;margin-top:10px">${T('wx.updated', { t: hm(WX.at) })}${WX.stale ? ' · ' + T('wx.offline') : ''}</p>
+      </section>`;
+    },
+    kpis: c => `<div class="kpis">
+      ${kpi('water', 'drop', T('kpi.water'), c.t.ml, 'ml')}
+      ${kpi('coral', 'check', T('kpi.glasses'), c.t.drinks)}
+      ${kpi('sun', 'bell', T('kpi.reminders'), c.ts.length)}
+      ${kpi('mint', 'clock', T('kpi.answered'), T('of', { a: c.t.atendidos, b: c.t.fired }))}
+    </div>`,
+    water: c => `<section class="card hero">
+      <svg class="deco" viewBox="0 0 380 260" aria-hidden="true" fill="none" stroke="#38c4ea" stroke-opacity=".35" stroke-width="1.5">
+        <path d="M0 160c60-60 120 40 180-20s110-60 200 10"/>
+        <path d="M0 200c70-50 130 30 190-10s100-50 190 5"/>
+        <path d="M20 120c50-30 100 30 150-5s90-30 160 10"/>
+      </svg>
+      ${glass(c.p)}
+      <div style="position:relative">
+        <p class="muted">${T('hero.goal')}</p>
+        <div class="big">${c.t.ml} <span>ml</span></div>
+        <p class="muted">${T('hero.of', { goal: c.goal, left: Math.max(c.goal - c.t.ml, 0) })}</p>
+        <div class="bar"><i style="width:${c.p * 100}%"></i></div>
+        <div class="row"><button class="btn aqua" onclick="agua.testAlert()">${ic('bell')} ${T('testAlert')}</button></div>
+      </div>
+    </section>`,
+    progress: c => `<section class="card dark">
+      <h2>${T('progress.title')}</h2>
+      <p class="muted">${c.st.sub}</p>
+      <div class="rings">
+        ${ring(c.p, T('ring.goal'))}
+        ${ring(c.ts.length ? c.passed / c.ts.length : 0, T('ring.reminders'))}
+        ${ring(c.t.fired ? c.t.atendidos / c.t.fired : 0, T('ring.answered'))}
+      </div>
+    </section>`,
+    next: c => `<section class="card blue">
+      <h2>${T('next.title')}</h2>
+      <p class="muted">${c.nx === undefined ? c.st.txt : T('next.every', { t: fmt(c.nx), n: C.iv })}</p>
+      ${arc(c.gp)}
+    </section>`,
+    reminders: c => {
+      const rows = c.ts.map(x => {
+        const cls = x < c.nowM ? 'past' : x === c.nx ? 'next' : '';
+        const lb = x < c.nowM ? T('list.past') : x === c.nx ? T('list.next') : T('list.scheduled');
+        return `<li class="${cls}"><span>${fmt(x)}</span><small>${lb}</small></li>`;
+      }).join('') || `<li class="muted">${T('list.empty')}</li>`;
+      return `<section class="card"><h2>${T('list.title')}</h2><p class="muted">${T('list.between', { a: C.start, b: C.end })}</p><ul class="times">${rows}</ul></section>`;
+    },
+    hours: () => {
+      const o = openS(), day0 = new Date(); day0.setHours(0, 0, 0, 0);
+      const todayMs = TSD.sessions.filter(s => s.start >= day0.getTime()).reduce((a, s) => a + durOf(s, Date.now()), 0);
+      return `<section class="card w-hours ${o ? 'on' : ''}">
+        <div class="toggle-row"><h2 style="margin:0">${T('w.hours')}</h2>
+          <button class="btn ${o ? 'coral' : 'mint'}" onclick="${o ? 'doCheckOut()' : 'doCheckIn()'}">${ic('clock')} ${o ? T('time.checkout') : T('time.checkin')}</button></div>
+        <div class="timer" style="margin-top:12px">${fmtDur(todayMs)}</div>
+        <p class="muted">${o ? T('time.working', { t: hm(o.start) }) : T('time.off')}</p>
+      </section>`;
+    },
+    agenda: () => {
+      const nowMs = Date.now(), today = keyOf(new Date());
+      const tmr = new Date(); tmr.setDate(tmr.getDate() + 1);
+      const next = [...PL.events].filter(e => evAt(e) >= nowMs - 3600000).sort((x, y) => evAt(x) - evAt(y)).slice(0, 4);
+      const when = e => (e.date === today ? '' : (e.date === keyOf(tmr) ? T('ag.tomorrow') : parseKey(e.date).toLocaleDateString(C.lang, { day: '2-digit', month: '2-digit' })) + ' · ');
+      const rows = next.map(e => `<li class="ev"><span class="ev-time">${e.time}</span><div class="ev-body"><strong>${esc(e.title)}</strong><small>${when(e)}${leadText(e.leadMin)}</small></div></li>`).join('');
+      return `<section class="card">
+        <div class="toggle-row"><h2 style="margin:0">${T('w.agenda')}</h2><button class="chip" onclick="go('agenda')">${T('home.seeAll')}</button></div>
+        ${rows ? `<ul class="evlist" style="margin-top:12px">${rows}</ul>` : `<p class="muted" style="margin-top:10px">${T('ag.empty')}</p>`}
+      </section>`;
+    },
+    tasks: () => {
+      const today = keyOf(new Date());
+      const daily = PL.tasks.filter(x => x.kind === 'daily');
+      const doneToday = daily.filter(x => x.doneDates.includes(today)).length;
+      const due = PL.tasks.filter(x => x.kind === 'once' && !x.done && x.due && x.due <= today); // vencem hoje ou atrasadas
+      const items = [...daily.map(x => ({ x, on: x.doneDates.includes(today) })), ...due.map(x => ({ x, on: false, late: x.due < today }))].slice(0, 8);
+      const rows = items.map(({ x, on, late }) => `<li class="task ${on ? 'done' : ''}">
+        <button class="chk ${on ? 'on' : ''}" role="checkbox" aria-checked="${on}" aria-label="${T('tk.mark')}" onclick="toggleTask('${esc(x.id)}')">${on ? ic('check') : ''}</button>
+        <span class="task-title">${esc(x.title)}</span>${late ? `<small class="due late">${T('tk.overdue')}</small>` : ''}</li>`).join('');
+      return `<section class="card">
+        <div class="toggle-row"><h2 style="margin:0">${T('w.tasks')}</h2><span class="pill on">${T('tk.progress', { a: doneToday, b: daily.length })}</span></div>
+        <ul class="tasks" style="margin-top:8px">${rows || `<li class="muted" style="padding:10px 0">${T('tk.empty')}</li>`}</ul>
+        <div style="margin-top:10px"><button class="chip" onclick="go('tarefas')">${T('home.seeAll')}</button></div>
+      </section>`;
+    }
+  };
+
+  // ---- Configurações → Tela inicial ----
+  const HOME_DEFAULT = [
+    { id: 'kpis', on: true, wide: true }, { id: 'weather', on: false, wide: false }, { id: 'water', on: true, wide: false }, { id: 'progress', on: true, wide: false },
+    { id: 'agenda', on: true, wide: false }, { id: 'tasks', on: true, wide: false }, { id: 'hours', on: true, wide: false },
+    { id: 'next', on: true, wide: false }, { id: 'reminders', on: true, wide: false }
+  ];
+  const HOME_NAMES = { weather: 'w.weather', kpis: 'w.kpis', water: 'w.water', progress: 'progress.title', next: 'next.title', reminders: 'list.title', hours: 'w.hours', agenda: 'w.agenda', tasks: 'w.tasks' };
+  function cardHome() {
+    const last = C.home.length - 1;
+    const rows = C.home.map((w, i) => `
+      <li class="hw ${w.on ? '' : 'off'}" draggable="true" ondragstart="homeDrag(event, ${i})" ondragover="homeOver(event)" ondragleave="this.classList.remove('over')" ondrop="homeDrop(event, ${i})">
+        <span class="grip" aria-hidden="true">⋮⋮</span>
+        <span class="hw-num">${i + 1}</span>
+        <span class="hw-name">${T(HOME_NAMES[w.id])}</span>
+        <button class="chip sm ${w.wide ? 'on' : ''}" aria-pressed="${w.wide}" onclick="homeWide(${i})">${T('cfg.homeWide')}</button>
+        <button class="xbtn" ${i === 0 ? 'disabled' : ''} aria-label="${T('cfg.homeUp')}" onclick="homeMove(${i}, -1)">↑</button>
+        <button class="xbtn" ${i === last ? 'disabled' : ''} aria-label="${T('cfg.homeDown')}" onclick="homeMove(${i}, 1)">↓</button>
+        <button class="switch ${w.on ? 'on' : ''}" role="switch" aria-checked="${w.on}" aria-label="${T('cfg.homeShow')}: ${T(HOME_NAMES[w.id])}" onclick="homeToggle(${i})"><i></i></button>
+      </li>`).join('');
+    return `<section class="card span-all" id="card-home">
+      <div class="toggle-row"><h2 style="margin:0">${T('cfg.home')}</h2><button class="chip" onclick="homeReset()">${T('cfg.homeReset')}</button></div>
+      <p class="muted" style="margin-top:6px">${T('cfg.homeHint')}</p>
+      <ul class="hwlist">${rows}</ul>
+    </section>`;
+  }
+  let dragFrom = null;
+  function homeDrag(e, i) { dragFrom = i; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(i)); }
+  function homeOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+  function homeDrop(e, i) {
+    e.preventDefault();
+    if (dragFrom === null || dragFrom === i) { dragFrom = null; render(); return; }
+    const [w] = C.home.splice(dragFrom, 1);
+    C.home.splice(i, 0, w);
+    dragFrom = null; render(); queueSave();
+  }
+  function homeMove(i, d) { const j = i + d; if (j < 0 || j >= C.home.length) return; [C.home[i], C.home[j]] = [C.home[j], C.home[i]]; render(); queueSave(); }
+  function homeToggle(i) { C.home[i].on = !C.home[i].on; render(); queueSave(); }
+  function homeWide(i) { C.home[i].wide = !C.home[i].wide; render(); queueSave(); }
+  function homeReset() { C.home = HOME_DEFAULT.map(w => ({ ...w })); render(); queueSave(); }
+  function customizeHome() { go('cfg'); const el = $('card-home'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
   function viewRel() {
     const y = cur.getFullYear(), m = cur.getMonth(), n = new Date(y, m + 1, 0).getDate(), off = new Date(y, m, 1).getDay();
@@ -409,19 +693,34 @@
   }
   function applyTime(v, apply) {
     const t = parseHM(v);
-    if (!t) { msg = { text: T('cfg.badTime'), err: true }; render(); return; }
-    apply(t); msg = { text: '', err: false }; render();
+    if (!t) { toast(T('cfg.badTime'), true); render(); return; }
+    apply(t); render();
   }
-  function setStart(v) { applyTime(v, t => { C.start = t; }); }
-  function setEnd(v) { applyTime(v, t => { C.end = t; }); }
-  function setPontoTime(i, v) { applyTime(v, t => { C.ponto.times[i] = t; }); }
+  function setStart(v) { applyTime(v, t => { C.start = t; queueSave(); }); }
+  function setEnd(v) { applyTime(v, t => { C.end = t; queueSave(); }); }
+  function setPontoTime(i, v) { applyTime(v, t => { C.ponto.times[i] = t; queueSave(); }); }
+  function setGoal(v) { C.goalMl = Number(v); queueSave(); }
+
+  // Aviso rápido no canto da janela; erros ficam mais tempo
+  let toastTimer = null;
+  function toast(text, err) {
+    const el = $('toast');
+    el.textContent = text;
+    el.className = 'toast show' + (err ? ' err' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = 'toast'; }, err ? 5000 : 1800);
+  }
+  // Salvamento automático: junta cliques rápidos num só envio e não redesenha a tela (não tira o foco do campo)
+  let saveTimer = null;
+  function queueSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveCfg, 350); }
 
   function viewCfg() {
     return `
     <header class="top">
-      <div><p class="cap">${T('cfg.cap')}</p><h1>${T('nav.settings')}</h1></div>
+      <div><p class="cap">${T('cfg.cap')}</p><h1>${T('nav.settings')}</h1><p class="muted" style="margin-top:6px">${T('cfg.autoHint')}</p></div>
     </header>
-    <div class="grid">
+    <div class="cfg-cols">
+      ${cardHome()}
       <section class="card">
         <h2>${T('cfg.hours')}</h2>
         <div class="fields" style="margin-top:10px">
@@ -440,7 +739,7 @@
       <section class="card">
         <h2>${T('cfg.goal')}</h2>
         <div class="chips" style="margin-top:10px">
-          <input class="chip-input" type="number" min="500" max="6000" step="250" value="${C.goalMl}" onchange="C.goalMl=Number(this.value)" aria-label="${T('cfg.goalAria')}">
+          <input class="chip-input" type="number" min="500" max="6000" step="250" value="${C.goalMl}" onchange="setGoal(this.value)" aria-label="${T('cfg.goalAria')}">
           <span class="muted">${T('cfg.mlPerDay')}</span>
         </div>
       </section>
@@ -454,15 +753,19 @@
         <h2>${T('cfg.system')}</h2>
         ${toggleRow(T('cfg.autostart'), 'autostart')}
         ${toggleRow(T('cfg.sound'), 'sound')}
-        ${toggleRow(T('cfg.visual'), 'visual')}
+        ${toggleRow(T('cfg.soundLoop'), 'soundLoop')}
+        <p class="label">${T('cfg.alertType')}</p>
+        <div class="chips">
+          <button class="chip ${C.alertStyle !== 'corner' ? 'on' : ''}" onclick="setAlertStyle('full')">${T('cfg.alertFull')}</button>
+          <button class="chip ${C.alertStyle === 'corner' ? 'on' : ''}" onclick="setAlertStyle('corner')">${T('cfg.alertCorner')}</button>
+        </div>
+        <p class="muted" style="margin-top:8px;font-size:13px">${T('cfg.alertHint')}</p>
       </section>
       ${cardLang()}
+      ${cardTheme()}
+      ${cardWeather()}
       ${cardSom()}
       ${cardPonto()}
-    </div>
-    <div class="actions">
-      <button class="btn dark" onclick="saveCfg()">${T('cfg.save')}</button>
-      <span id="msg" class="${msg.err ? 'err' : ''}">${msg.text}</span>
     </div>`;
   }
 
@@ -475,6 +778,80 @@
         ${I18N.LANGS.map(l => `<button class="chip ${C.lang === l ? 'on' : ''}" lang="${l}" onclick="setLang('${l}')">${I18N.t(l, 'langName')}</button>`).join('')}
       </div>
     </section>`;
+  }
+  // Tema: vale na hora em todas as janelas e fica salvo
+  function cardTheme() {
+    const opts = [['system', 'cfg.themeSystem'], ['light', 'cfg.themeLight'], ['dark', 'cfg.themeDark']];
+    return `
+    <section class="card">
+      <h2>${T('cfg.theme')}</h2>
+      <div class="chips" style="margin-top:10px">
+        ${opts.map(([v, k]) => `<button class="chip ${(C.theme || 'system') === v ? 'on' : ''}" onclick="setTheme('${v}')">${T(k)}</button>`).join('')}
+      </div>
+    </section>`;
+  }
+  // ---- Configurações → Clima ----
+  function cardWeather() {
+    const w = C.weather || {};
+    const results = wxResults === null ? '' : wxResults.length
+      ? `<ul class="wx-results">${wxResults.map((r, i) => `<li><button onclick="pickCity(${i})">${esc(r.name)}</button></li>`).join('')}</ul>`
+      : `<p class="muted" style="margin-top:8px">${T('wx.noResults')}</p>`;
+    return `<section class="card" id="card-weather">
+      <div class="toggle-row"><h2 style="margin:0">${T('cfg.weather')}</h2>
+        <button class="switch ${w.enabled ? 'on' : ''}" role="switch" aria-checked="${!!w.enabled}" aria-label="${T('wx.enable')}" onclick="toggleWeather()"><i></i></button></div>
+      <p class="muted" style="margin-top:6px">${T('wx.hint')}</p>
+      <p style="margin:12px 0 0;font-weight:600">${w.name ? T('wx.current', { n: esc(w.name) }) : T('wx.none')}</p>
+      <div class="chips" style="margin-top:12px">
+        <input id="wx-q" class="chip-input wide" maxlength="80" value="${esc(wxQuery)}" placeholder="${T('wx.searchPh')}" oninput="wxQuery=this.value" onkeydown="if(event.key==='Enter')searchCity()">
+        <button class="btn" onclick="searchCity()">${T('wx.search')}</button>
+      </div>
+      ${results}
+      <div class="chips" style="margin-top:12px">
+        <button class="chip" onclick="detectCity()">${T('wx.detect')}</button>
+        <span class="muted" style="font-size:13px">${T('wx.detectHint')}</span>
+      </div>
+      <p class="label">${T('wx.unit')}</p>
+      <div class="chips">
+        <button class="chip ${w.unit !== 'f' ? 'on' : ''}" onclick="setWxUnit('c')">°C</button>
+        <button class="chip ${w.unit === 'f' ? 'on' : ''}" onclick="setWxUnit('f')">°F</button>
+      </div>
+    </section>`;
+  }
+  async function refreshWeather() {
+    try { WX = await agua.weatherGet(); } catch (e) { WX = { ok: false, offline: true }; }
+    wxAt = Date.now();
+  }
+  async function saveWeather(w) {
+    const r = await agua.weatherSet(w);
+    if (r.ok) { C.weather = r.weather; await refreshWeather(); toast(T('cfg.saved')); }
+    render();
+  }
+  function toggleWeather() {
+    const w = C.weather || {};
+    if (!w.enabled && w.lat === null) { toast(T('wx.setup'), true); const q = $('wx-q'); if (q) q.focus(); return; } // precisa de cidade antes
+    saveWeather({ ...w, enabled: !w.enabled });
+  }
+  async function searchCity() {
+    const r = await agua.weatherSearch(wxQuery);
+    if (r.ok) wxResults = r.results; else toast(r.error, true);
+    render();
+    const q = $('wx-q'); if (q) q.focus();
+  }
+  function pickCity(i) {
+    const p = wxResults[i];
+    wxResults = null; wxQuery = '';
+    saveWeather({ ...C.weather, enabled: true, name: p.name, lat: p.lat, lon: p.lon });
+  }
+  async function detectCity() {
+    const r = await agua.weatherDetect();
+    if (r.ok) saveWeather({ ...C.weather, enabled: true, ...r.place }); else toast(r.error, true);
+  }
+  function setWxUnit(u) { saveWeather({ ...C.weather, unit: u }); }
+  function goWeather() { go('cfg'); const el = $('card-weather'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  async function setTheme(v) {
+    const r = await agua.setTheme(v);
+    if (r.ok) { C.theme = v; render(); toast(T('cfg.saved')); }
   }
   async function setLang(l) {
     const r = await agua.setLang(l);
@@ -509,15 +886,239 @@
     render();
   }
 
+  // ---- Horas (check-in/check-out) ----
+  const hm = t => { const d = new Date(t); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+  const fmtDur = ms => { const min = Math.max(0, Math.round(ms / 60000)); return `${Math.floor(min / 60)}h${pad(min % 60)}`; };
+  const openS = () => TSD.sessions.find(s => s.end === null);
+  const durOf = (s, now) => (s.end === null ? now : s.end) - s.start;
+
+  function viewHoras() {
+    const now = Date.now(), y = cur.getFullYear(), m = cur.getMonth(), open = openS();
+    const day0 = new Date(); day0.setHours(0, 0, 0, 0);
+    const week0 = new Date(day0); week0.setDate(day0.getDate() - day0.getDay()); // semana começa no domingo
+    const sumFrom = from => TSD.sessions.filter(s => s.start >= from).reduce((a, s) => a + durOf(s, now), 0);
+    const monthS = TSD.sessions
+      .filter(s => { const d = new Date(s.start); return d.getFullYear() === y && d.getMonth() === m; })
+      .sort((a, b) => b.start - a.start);
+    const monthMs = monthS.reduce((a, s) => a + durOf(s, now), 0);
+    const daysWorked = new Set(monthS.map(s => keyOf(new Date(s.start)))).size;
+    // check-in esquecido aberto desde outro dia: mostra a data para a pessoa corrigir
+    const openText = !open ? '' : open.start < day0.getTime()
+      ? T('time.since', { d: new Date(open.start).toLocaleDateString(C.lang, { day: '2-digit', month: '2-digit' }), t: hm(open.start) })
+      : T('time.working', { t: hm(open.start) });
+    const status = open ? `
+      <section class="card clock-card on">
+        <div><p class="muted">${openText}</p><div class="timer" id="timer">${fmtDur(now - open.start)}</div></div>
+        <div class="clock-actions">
+          <input id="note" class="chip-input wide" maxlength="300" placeholder="${T('time.notePh')}">
+          <button class="btn big coral" onclick="doCheckOut()">${ic('clock')} ${T('time.checkout')}</button>
+        </div>
+      </section>` : `
+      <section class="card clock-card">
+        <div><h2>${T('time.off')}</h2><p class="muted">${T('time.offSub')}</p></div>
+        <div class="clock-actions"><button class="btn big mint" onclick="doCheckIn()">${ic('clock')} ${T('time.checkin')}</button></div>
+      </section>`;
+    const rows = monthS.map(s => `
+      <tr>
+        <td>${new Date(s.start).toLocaleDateString(C.lang, { weekday: 'short', day: '2-digit', month: '2-digit' })}</td>
+        <td>${hm(s.start)}</td>
+        <td>${s.end === null ? `<span class="open">${T('time.inProgress')}</span>` : hm(s.end)}</td>
+        <td>${fmtDur(durOf(s, now))}</td>
+        <td class="note" title="${esc(s.note || '')}">${esc(s.note || '')}</td>
+        <td style="text-align:right"><button class="xbtn" onclick="delSession('${esc(s.id)}')" aria-label="${T('time.delete')}">×</button></td>
+      </tr>`).join('') || `<tr><td colspan="6" class="muted">${T('time.empty')}</td></tr>`;
+    return `
+    <header class="top">
+      <div><p class="cap">${T('time.cap')}</p><h1>${T('nav.hours')}</h1></div>
+    </header>
+    ${status}
+    <div class="kpis">
+      ${kpi('mint', 'clock', T('nav.today'), fmtDur(sumFrom(day0.getTime())))}
+      ${kpi('water', 'clock', T('time.week'), fmtDur(sumFrom(week0.getTime())))}
+      ${kpi('sun', 'chart', T('time.month'), fmtDur(monthMs))}
+      ${kpi('coral', 'check', T('time.days'), daysWorked)}
+    </div>
+    <section class="card">
+      <div class="top" style="margin-bottom:8px">
+        <h2 style="margin:0">${T('time.table', { m: T('months')[m] + ' ' + y })}</h2>
+        <div class="nav2">
+          <button onclick="shiftMonth(-1)" aria-label="${T('rep.prev')}">←</button>
+          <span>${T('months')[m]} ${y}</span>
+          <button onclick="shiftMonth(1)" aria-label="${T('rep.next')}">→</button>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>${T('time.col.date')}</th><th>${T('time.col.in')}</th><th>${T('time.col.out')}</th><th>${T('time.col.dur')}</th><th>${T('time.col.note')}</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr><td colspan="3">${T('time.total')}</td><td>${fmtDur(monthMs)}</td><td colspan="2"></td></tr></tfoot>
+      </table></div>
+      <div class="actions"><button class="btn aqua" onclick="exportMonth()">${ic('chart')} ${T('time.export')}</button></div>
+    </section>
+    <section class="card" style="margin-top:20px">
+      <h2>${T('time.add')}</h2>
+      <p class="muted">${T('time.addHint')}</p>
+      <div class="addrow">
+        <input class="dinput" type="date" value="${draft.date}" onchange="draft.date=this.value" aria-label="${T('time.col.date')}">
+        ${timeField(draft.start, "setDraft('start',this.value)", T('time.col.in'))}
+        ${timeField(draft.end, "setDraft('end',this.value)", T('time.col.out'))}
+        <input class="chip-input wide" maxlength="300" value="${esc(draft.note)}" placeholder="${T('time.notePh')}" oninput="draft.note=this.value">
+        <button class="btn dark" onclick="addManual()">${T('time.addBtn')}</button>
+      </div>
+    </section>
+    <div class="actions"><span id="msg" class="${msg.err ? 'err' : ''}">${esc(msg.text)}</span></div>`;
+  }
+  async function refreshTime() { TSD = await agua.getTime(); }
+  const result = r => (r.ok ? { text: '', err: false } : { text: r.error, err: true });
+  async function doCheckIn() { msg = result(await agua.checkIn()); await refreshTime(); render(); }
+  async function doCheckOut() { msg = result(await agua.checkOut($('note') ? $('note').value : '')); await refreshTime(); render(); }
+  function setDraft(k, v) { applyTime(v, t => { draft[k] = t; }); }
+  async function addManual() {
+    const r = await agua.addTime(draft);
+    if (r.ok) { draft.note = ''; msg = { text: T('time.added'), err: false }; } else msg = { text: r.error, err: true };
+    await refreshTime(); render();
+  }
+  async function delSession(id) {
+    if (!confirm(T('time.confirmDelete'))) return;
+    await agua.deleteTime(id); await refreshTime(); render();
+  }
+  async function exportMonth() {
+    const r = await agua.exportTime(cur.getFullYear(), cur.getMonth());
+    if (r.ok) msg = { text: T('time.exported', { p: r.path }), err: false };
+    else if (!r.canceled) msg = { text: r.error, err: true };
+    render();
+  }
+
+  // ---- Agenda (compromissos) ----
+  const LEADS = [0, 5, 10, 15, 30, 60];
+  const leadText = n => (n === 0 ? T('pt.onTime') : n === 60 ? T('ag.lead60') : T('ag.leadOpt', { n }));
+  const evAt = e => { const [y, mo, d] = e.date.split('-').map(Number); const [h, mi] = e.time.split(':').map(Number); return new Date(y, mo - 1, d, h, mi).getTime(); };
+  const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+
+  function viewAgenda() {
+    const now = Date.now(), today = keyOf(new Date());
+    const tmr = new Date(); tmr.setDate(tmr.getDate() + 1);
+    const sorted = [...PL.events].sort((a, b) => evAt(a) - evAt(b));
+    const upcoming = sorted.filter(e => evAt(e) >= now - 3600000); // continua em "próximos" até 1 h depois do horário
+    const past = sorted.filter(e => evAt(e) < now - 3600000).reverse().slice(0, 10);
+    const dayLabel = k => (k === today ? T('nav.today') : k === keyOf(tmr) ? T('ag.tomorrow')
+      : parseKey(k).toLocaleDateString(C.lang, { weekday: 'long', day: 'numeric', month: 'long' }));
+    const item = e => `<li class="ev"><span class="ev-time">${e.time}</span>
+      <div class="ev-body"><strong>${esc(e.title)}</strong>${e.note ? `<small>${esc(e.note)}</small>` : ''}<small class="ev-lead">${ic('bell')} ${leadText(e.leadMin)}</small></div>
+      <button class="xbtn" onclick="delEvent('${esc(e.id)}')" aria-label="${T('ag.delete')}">×</button></li>`;
+    const byDay = list => { const g = {}; for (const e of list) (g[e.date] = g[e.date] || []).push(e); return g; };
+    const groups = byDay(upcoming);
+    const upHtml = Object.keys(groups).map(k => `<div class="ev-day"><h3>${dayLabel(k)}</h3><ul class="evlist">${groups[k].map(item).join('')}</ul></div>`).join('')
+      || `<p class="muted" style="margin-top:10px">${T('ag.empty')}</p>`;
+    const pastGroups = byDay(past);
+    const pastHtml = Object.keys(pastGroups).map(k => `<div class="ev-day"><h3>${dayLabel(k)}</h3><ul class="evlist">${pastGroups[k].map(item).join('')}</ul></div>`).join('');
+    return `
+    <header class="top">
+      <div><p class="cap">${T('ag.cap')}</p><h1>${T('nav.agenda')}</h1></div>
+    </header>
+    <section class="card">
+      <h2>${T('ag.new')}</h2>
+      <div class="form-grid">
+        <input class="dinput span2" maxlength="120" value="${esc(evDraft.title)}" placeholder="${T('ag.titlePh')}" oninput="evDraft.title=this.value" aria-label="${T('ag.title')}">
+        <input class="dinput" type="date" value="${evDraft.date}" onchange="evDraft.date=this.value" aria-label="${T('time.col.date')}">
+        ${timeField(evDraft.time, 'setEvTime(this.value)', T('ag.time'))}
+        <select class="dinput" onchange="evDraft.leadMin=Number(this.value)" aria-label="${T('ag.lead')}">
+          ${LEADS.map(n => `<option value="${n}" ${evDraft.leadMin === n ? 'selected' : ''}>${T('ag.lead')}: ${leadText(n)}</option>`).join('')}
+        </select>
+        <span></span>
+        <input class="dinput span2" maxlength="300" value="${esc(evDraft.note)}" placeholder="${T('ag.notePh')}" oninput="evDraft.note=this.value">
+        <button class="btn dark" onclick="addEvent()">${ic('cal')} ${T('ag.add')}</button>
+      </div>
+    </section>
+    <section class="card" style="margin-top:20px">
+      <h2>${T('ag.upcoming')}</h2>
+      ${upHtml}
+    </section>
+    ${pastHtml ? `<section class="card past" style="margin-top:20px"><h2>${T('ag.past')}</h2>${pastHtml}</section>` : ''}`;
+  }
+  async function refreshPlan() { PL = await agua.getPlan(); }
+  function setEvTime(v) { applyTime(v, t => { evDraft.time = t; }); }
+  async function addEvent() {
+    const r = await agua.addEvent(evDraft);
+    if (r.ok) { evDraft.title = ''; evDraft.note = ''; toast(T('ag.added')); } else toast(r.error, true);
+    await refreshPlan(); render();
+  }
+  async function delEvent(id) {
+    if (!confirm(T('ag.confirmDelete'))) return;
+    await agua.delEvent(id); await refreshPlan(); render();
+  }
+
+  // ---- Tarefas (diárias e pontuais) ----
+  function viewTarefas() {
+    const today = keyOf(new Date());
+    const daily = PL.tasks.filter(t => t.kind === 'daily');
+    const doneToday = daily.filter(t => t.doneDates.includes(today)).length;
+    const dueKey = t => t.due || '9999-99-99'; // sem prazo vai para o fim
+    const pending = PL.tasks.filter(t => t.kind === 'once' && !t.done).sort((a, b) => dueKey(a).localeCompare(dueKey(b)));
+    const done = PL.tasks.filter(t => t.kind === 'once' && t.done).sort((a, b) => b.doneAt - a.doneAt).slice(0, 10);
+    const fmtDay = k => parseKey(k).toLocaleDateString(C.lang, { day: '2-digit', month: '2-digit' });
+    const row = (t, checked, meta) => `<li class="task ${checked ? 'done' : ''}">
+      <button class="chk ${checked ? 'on' : ''}" role="checkbox" aria-checked="${checked}" aria-label="${T('tk.mark')}" onclick="toggleTask('${esc(t.id)}')">${checked ? ic('check') : ''}</button>
+      <span class="task-title">${esc(t.title)}</span>${meta || ''}
+      <button class="xbtn" onclick="delTask('${esc(t.id)}')" aria-label="${T('tk.delete')}">×</button></li>`;
+    const empty = `<li class="muted" style="padding:10px 0">${T('tk.empty')}</li>`;
+    const dailyHtml = daily.map(t => row(t, t.doneDates.includes(today))).join('') || empty;
+    const pendHtml = pending.map(t => {
+      const late = t.due && t.due < today;
+      const meta = t.due ? `<small class="due ${late ? 'late' : ''}">${late ? T('tk.overdue') + ' · ' : ''}${T('tk.dueOn', { d: fmtDay(t.due) })}</small>` : '';
+      return row(t, false, meta);
+    }).join('') || empty;
+    const doneHtml = done.map(t => row(t, true)).join('');
+    return `
+    <header class="top">
+      <div><p class="cap">${T('tk.cap')}</p><h1>${T('nav.tasks')}</h1></div>
+    </header>
+    <section class="card">
+      <h2>${T('tk.new')}</h2>
+      <div class="form-grid">
+        <input class="dinput span2" maxlength="120" value="${esc(tkDraft.title)}" placeholder="${T('tk.titlePh')}" oninput="tkDraft.title=this.value" onkeydown="if(event.key==='Enter')addTask()">
+        <div class="chips">
+          <button class="chip ${tkDraft.kind === 'daily' ? 'on' : ''}" onclick="setTaskKind('daily')">${T('tk.daily')}</button>
+          <button class="chip ${tkDraft.kind === 'once' ? 'on' : ''}" onclick="setTaskKind('once')">${T('tk.once')}</button>
+        </div>
+        ${tkDraft.kind === 'once' ? `<input class="dinput" type="date" value="${tkDraft.due}" onchange="tkDraft.due=this.value" aria-label="${T('tk.due')}" title="${T('tk.due')}">` : '<span></span>'}
+        <span></span>
+        <button class="btn dark" onclick="addTask()">${ic('list')} ${T('time.addBtn')}</button>
+      </div>
+    </section>
+    <div class="grid" style="margin-top:20px">
+      <section class="card">
+        <div class="toggle-row"><h2 style="margin:0">${T('tk.dailyTitle')}</h2><span class="pill on">${T('tk.progress', { a: doneToday, b: daily.length })}</span></div>
+        <p class="muted" style="margin-bottom:6px">${T('tk.dailyHint')}</p>
+        <ul class="tasks">${dailyHtml}</ul>
+      </section>
+      <section class="card">
+        <h2>${T('tk.onceTitle')}</h2>
+        <ul class="tasks">${pendHtml}</ul>
+        ${done.length ? `<p class="label">${T('tk.doneSection')}</p><ul class="tasks">${doneHtml}</ul>` : ''}
+      </section>
+    </div>`;
+  }
+  function setTaskKind(k) { tkDraft.kind = k; render(); }
+  async function addTask() {
+    const r = await agua.addTask(tkDraft);
+    if (r.ok) { tkDraft.title = ''; tkDraft.due = ''; toast(T('tk.added')); } else toast(r.error, true);
+    await refreshPlan(); render();
+  }
+  async function toggleTask(id) { await agua.toggleTask(id); await refreshPlan(); render(); }
+  async function delTask(id) {
+    if (!confirm(T('tk.confirmDelete'))) return;
+    await agua.delTask(id); await refreshPlan(); render();
+  }
+
   function render() {
     document.documentElement.lang = C.lang;
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
-    $('main').innerHTML = { hoje: viewHoje, rel: viewRel, cfg: viewCfg }[V]();
+    $('main').innerHTML = { hoje: viewHoje, horas: viewHoras, agenda: viewAgenda, tarefas: viewTarefas, rel: viewRel, cfg: viewCfg }[V]();
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === V));
   }
   function go(v) { V = v; msg = { text: '', err: false }; render(); }
-  function setIv(n) { const v = Number(n); if (v >= 5 && v <= 480) { C.iv = v; render(); } }
-  function toggleDay(i) { C.days[i] = !C.days[i]; render(); }
+  function setIv(n) { const v = Number(n); if (v >= 5 && v <= 480) { C.iv = v; render(); queueSave(); } }
+  function toggleDay(i) { C.days[i] = !C.days[i]; render(); queueSave(); }
   function shiftMonth(d) { cur = new Date(cur.getFullYear(), cur.getMonth() + d, 1); render(); }
   function pickDay(k) { sel = k; render(); }
 
@@ -554,42 +1155,49 @@
       </div>
     </section>`;
   }
-  function togglePonto() { C.ponto.enabled = !C.ponto.enabled; render(); }
-  function togglePontoDay(i) { C.ponto.days[i] = !C.ponto.days[i]; render(); }
+  function togglePonto() { C.ponto.enabled = !C.ponto.enabled; render(); queueSave(); }
+  function togglePontoDay(i) { C.ponto.days[i] = !C.ponto.days[i]; render(); queueSave(); }
   function toggleRow(label, key) {
     return `<div class="toggle-row" style="padding:12px 0;border-top:1px solid var(--line)">
       <span>${label}</span>
       <button class="switch ${C[key] ? 'on' : ''}" role="switch" aria-checked="${C[key]}" onclick="flipSetting('${key}')" aria-label="${label}"><i></i></button>
     </div>`;
   }
-  function flipSetting(k) { C[k] = !C[k]; render(); }
+  function flipSetting(k) { C[k] = !C[k]; render(); queueSave(); }
+  function setAlertStyle(s) { C.alertStyle = s; render(); queueSave(); }
   function setPontoClt(v) {
     C.ponto.clt = v;
     const base = ['08:00', '12:00', '13:00', '17:00'];
     while (v && C.ponto.times.length < 4) C.ponto.times.push(base[C.ponto.times.length]);
-    render();
+    render(); queueSave();
   }
-  function removePontoTime(i) { C.ponto.times.splice(i, 1); render(); }
-  function addPontoTime() { C.ponto.times.push('12:00'); render(); }
-  function setPontoLead(n) { C.ponto.leadMin = n; render(); }
+  function removePontoTime(i) { C.ponto.times.splice(i, 1); render(); queueSave(); }
+  function addPontoTime() { C.ponto.times.push('12:00'); render(); queueSave(); }
+  function setPontoLead(n) { C.ponto.leadMin = n; render(); queueSave(); }
 
   async function saveCfg() {
     const r = await agua.saveConfig({
       start: C.start, end: C.end, iv: C.iv, goalMl: C.goalMl, days: C.days,
-      autostart: C.autostart, sound: C.sound, visual: C.visual, ponto: C.ponto
+      autostart: C.autostart, sound: C.sound, alertStyle: C.alertStyle, soundLoop: C.soundLoop, home: C.home, ponto: C.ponto
     });
-    msg = r.ok ? { text: T('cfg.saved'), err: false } : { text: r.error, err: true };
-    render();
+    if (r.ok) toast(T('cfg.saved')); else toast(r.error, true);
   }
 
   (async () => {
     C = await agua.getConfig();
     R = await agua.getReport();
+    TSD = await agua.getTime();
+    PL = await agua.getPlan();
+    refreshWeather().then(() => { if (V === 'hoje') render(); });
     render();
-    // Atualiza Hoje e Relatórios sem mexer no formulário de configurações
+    // Check-in/check-out feito pela bandeja: atualiza a tela Horas
+    agua.onTimeChanged(async () => { await refreshTime(); if (V === 'horas' || V === 'hoje') render(); });
+    // Atualiza Hoje e Relatórios; em Horas só o cronômetro, para não apagar o que está sendo digitado
     setInterval(async () => {
       R = await agua.getReport();
-      if (V !== 'cfg') render();
+      if (V === 'hoje' && Date.now() - wxAt > 10 * 60000) await refreshWeather();
+      if (V === 'horas') { const o = openS(), el = $('timer'); if (o && el) el.textContent = fmtDur(Date.now() - o.start); }
+      else if (V === 'hoje' || V === 'rel') render();
     }, 20000);
   })();
 </script>
