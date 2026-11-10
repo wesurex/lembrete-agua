@@ -9,7 +9,7 @@
     "test": "electron . --test",
     "dist": "electron-builder --linux deb --win nsis --publish never",
     "dist:win": "electron-builder --win nsis --publish never",
-    "shots": "electron scripts/screenshots.js --background"
+    "shots": "electron scripts/screenshots.js --background && electron scripts/screenshots.js --background --lang=en-US && electron scripts/screenshots.js --background --lang=es"
   },
   "devDependencies": {
     "electron": "^45.2.3",

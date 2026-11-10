@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WRS Tools · aviso vibrando (demonstração para a LP)</title>
+<style>
+  /* Página de demonstração: só o fundo. O componente começa em ".wrs-alert". */
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;padding:24px;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       background:linear-gradient(180deg,#1b66b0 0%,#4a9fe3 55%,#d8f55a 100%)}
+
+  /* ---------- Aviso do WRS Tools (ilustração para a LP) ---------- */
+  .wrs-alert{width:380px;max-width:100%;box-sizing:border-box;background:#fff;color:#0f2a3d;border:2px solid #38c4ea;border-radius:18px;
+             box-shadow:0 10px 28px rgba(15,42,61,.18);padding:18px 20px;display:flex;flex-direction:column;align-items:center;gap:4px;
+             text-align:center;animation:wrs-shake 1.6s ease-in-out infinite}
+  .wrs-alert svg{width:44px;height:62px}
+  .wrs-alert strong{font-size:22px;font-weight:800;letter-spacing:-.03em;margin-top:2px}
+  .wrs-alert p{margin:0;font-size:14px;color:#5b7283}
+  .wrs-alert .wrs-row{display:flex;gap:8px;margin-top:10px}
+  .wrs-alert .wrs-btn{font-size:14px;font-weight:600;padding:9px 16px;border-radius:99px;border:1px solid #cfe3ea;background:#fff;color:#0f2a3d}
+  .wrs-alert .wrs-btn.primary{background:#167aa6;border-color:#167aa6;color:#fff}
+  /* variação escura */
+  .wrs-alert.dark{background:#12212d;color:#e6f1f6;border-color:#14709a;box-shadow:0 10px 28px rgba(0,0,0,.45)}
+  .wrs-alert.dark p{color:#93abb8}
+  .wrs-alert.dark .wrs-btn{background:#12212d;border-color:#23384a;color:#e6f1f6}
+  .wrs-alert.dark .wrs-btn.primary{background:#14709a;border-color:#14709a;color:#fff}
+  /* a mesma vibração do app: uma rajada no começo de cada ciclo e depois uma pausa */
+  @keyframes wrs-shake{
+    0%,42%,100%{transform:translateX(0) rotate(0)}
+    6%{transform:translateX(-7px) rotate(-1.5deg)}
+    12%{transform:translateX(7px) rotate(1.5deg)}
+    18%{transform:translateX(-6px) rotate(-1deg)}
+    24%{transform:translateX(6px) rotate(1deg)}
+    30%{transform:translateX(-3px)}
+    36%{transform:translateX(3px)}
+  }
+  @media (prefers-reduced-motion:reduce){ .wrs-alert{animation:none} }
+</style>
+</head>
+<body>
+
+  <!-- É uma ilustração: os "botões" são <span>, para não virarem controles sem função no teclado -->
+  <div class="wrs-alert" role="img" aria-label="Exemplo do aviso do WRS Tools: Hora de beber água, com os botões Já bebi e Adiar 10 min">
+    <svg viewBox="0 0 120 170" aria-hidden="true">
+      <defs><clipPath id="wrs-bottle"><path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z"/></clipPath></defs>
+      <g clip-path="url(#wrs-bottle)"><rect x="0" y="72" width="120" height="110" fill="#bfeaf8"/>
+        <path d="M-30 72q15-8 30 0t30 0t30 0t30 0t30 0t30 0V170H-30z" fill="#38c4ea"/></g>
+      <path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M52 4h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <strong>Hora de beber água</strong>
+    <p>Um copo agora ajuda a manter a meta do dia.</p>
+    <div class="wrs-row" aria-hidden="true">
+      <span class="wrs-btn primary">Já bebi</span>
+      <span class="wrs-btn">Adiar 10 min</span>
+    </div>
+  </div>
+
+  <div class="wrs-alert dark" role="img" aria-label="O mesmo aviso no tema escuro">
+    <svg viewBox="0 0 120 170" aria-hidden="true">
+      <defs><clipPath id="wrs-bottle-dark"><path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z"/></clipPath></defs>
+      <g clip-path="url(#wrs-bottle-dark)"><rect x="0" y="72" width="120" height="110" fill="#bfeaf8"/>
+        <path d="M-30 72q15-8 30 0t30 0t30 0t30 0t30 0t30 0V170H-30z" fill="#38c4ea"/></g>
+      <path d="M46 10h28v18l14 22v98a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V50l14-22z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M52 4h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <strong>Hora de beber água</strong>
+    <p>Um copo agora ajuda a manter a meta do dia.</p>
+    <div class="wrs-row" aria-hidden="true">
+      <span class="wrs-btn primary">Já bebi</span>
+      <span class="wrs-btn">Adiar 10 min</span>
+    </div>
+  </div>
+
+</body>
+</html>

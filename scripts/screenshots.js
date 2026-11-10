@@ -1,5 +1,6 @@
-// Gera as capturas de tela do app com dados de exemplo, em docs/screenshots/.
-// Uso: npm run shots
+// Gera as capturas de tela do app com dados de exemplo, em docs/screenshots/ (português),
+// docs/screenshots/en/ e docs/screenshots/es/. Os nomes dos arquivos são os mesmos nos três idiomas.
+// Uso: npm run shots (os três idiomas) ou electron scripts/screenshots.js --background --lang=en-US
 // Roda o app de verdade (main.js) com uma pasta de dados temporária: não lê nem altera os seus dados.
 // As janelas são desenhadas fora da tela (offscreen); a captura é feita pelo protocolo de depuração do Chromium, em 2x.
 const { app, BrowserWindow, nativeTheme } = require('electron');
@@ -8,7 +9,39 @@ const fs = require('fs');
 const os = require('os');
 
 const ROOT = path.join(__dirname, '..');
-const OUT = path.join(ROOT, 'docs', 'screenshots');
+// Idioma das capturas: --lang=pt-BR (padrão), en-US ou es
+const LANG = (process.argv.find(a => a.startsWith('--lang=')) || '--lang=pt-BR').slice(7);
+const SUB = { 'pt-BR': '', 'en-US': 'en', es: 'es' }[LANG];
+if (SUB === undefined) { console.error('idioma desconhecido: ' + LANG); process.exit(1); }
+const OUT = path.join(ROOT, 'docs', 'screenshots', SUB);
+
+// Dados de exemplo em cada idioma
+const L = {
+  'pt-BR': {
+    place: 'Joinville, Santa Catarina, Brasil', sound: 'sino-suave.mp4',
+    notes: ['Reunião de alinhamento', 'Desenvolvimento da proposta', 'Revisão de relatórios', 'Atendimento a clientes', 'Planejamento da semana', 'Ajustes do projeto'],
+    todayNote: 'Revisão do relatório mensal',
+    events: ['Reunião com cliente', 'Academia', 'Dentista', 'Entrega do projeto', 'Daily da equipe'],
+    eventNotes: ['Alinhamento do projeto. O link está no e-mail.', 'Levar os exames.'],
+    tasks: ['Alongar por 10 minutos', 'Responder e-mails pendentes', 'Ler 20 páginas', 'Planejar o dia seguinte', 'Pagar o boleto do contador', 'Emitir a nota fiscal do mês', 'Renovar o domínio do site', 'Enviar o relatório mensal']
+  },
+  'en-US': {
+    place: 'Joinville, Santa Catarina, Brazil', sound: 'soft-bell.mp4',
+    notes: ['Alignment meeting', 'Proposal development', 'Report review', 'Client support', 'Weekly planning', 'Project adjustments'],
+    todayNote: 'Monthly report review',
+    events: ['Client meeting', 'Gym', 'Dentist', 'Project delivery', 'Team daily'],
+    eventNotes: ['Project alignment. The link is in the email.', 'Bring the exam results.'],
+    tasks: ['Stretch for 10 minutes', 'Reply to pending emails', 'Read 20 pages', 'Plan the next day', 'Pay the accountant', 'Issue this month\'s invoice', 'Renew the website domain', 'Send the monthly report']
+  },
+  es: {
+    place: 'Joinville, Santa Catarina, Brasil', sound: 'campana-suave.mp4',
+    notes: ['Reunión de alineación', 'Desarrollo de la propuesta', 'Revisión de informes', 'Atención a clientes', 'Planificación de la semana', 'Ajustes del proyecto'],
+    todayNote: 'Revisión del informe mensual',
+    events: ['Reunión con cliente', 'Gimnasio', 'Dentista', 'Entrega del proyecto', 'Daily del equipo'],
+    eventNotes: ['Alineación del proyecto. El enlace está en el correo.', 'Llevar los exámenes.'],
+    tasks: ['Estirar durante 10 minutos', 'Responder correos pendientes', 'Leer 20 páginas', 'Planificar el día siguiente', 'Pagar la factura del contador', 'Emitir la factura del mes', 'Renovar el dominio del sitio', 'Enviar el informe mensual']
+  }
+}[LANG];
 const DATA = fs.mkdtempSync(path.join(os.tmpdir(), 'agua-shots-'));
 app.setPath('userData', DATA);
 
@@ -29,11 +62,11 @@ const weekday = off => { const g = new Date(at(off, 12)).getDay(); return g !== 
 
 function seed() {
   const config = {
-    lang: 'pt-BR', start: '06:30', end: '16:30', iv: 60, goalMl: 2500,
+    lang: LANG, start: '06:30', end: '16:30', iv: 60, goalMl: 2500,
     days: [false, true, true, true, true, true, false],
     autostart: false, // nunca true aqui: o app ligaria a inicialização automática de verdade
     sound: true, alertStyle: 'corner', soundLoop: true, theme: 'light',
-    weather: { enabled: true, name: 'Joinville, Santa Catarina, Brasil', lat: -26.30444, lon: -48.84556, unit: 'c' },
+    weather: { enabled: true, name: L.place, lat: -26.30444, lon: -48.84556, unit: 'c' },
     // painel fechando em pares: o bloco de lembretes fica desligado (o clima aparece na pílula do topo)
     home: [{ id: 'kpis', on: true, wide: true }, { id: 'water', on: true, wide: false }, { id: 'progress', on: true, wide: false },
       { id: 'agenda', on: true, wide: false }, { id: 'tasks', on: true, wide: false }, { id: 'hours', on: true, wide: false },
@@ -63,7 +96,7 @@ function seed() {
   });
 
   // Horas: dois períodos por dia útil e um check-in aberto hoje
-  const notes = ['Reunião de alinhamento', 'Desenvolvimento da proposta', 'Revisão de relatórios', 'Atendimento a clientes', 'Planejamento da semana', 'Ajustes do projeto'];
+  const notes = L.notes;
   const sessions = [];
   let s = 0;
   for (let off = -34; off <= -1; off++) {
@@ -72,26 +105,26 @@ function seed() {
     sessions.push({ id: 't' + s, start: at(off, 13, 0), end: at(off, 17, 30 - (s % 4) * 5), note: notes[(s + 3) % notes.length] });
     s++;
   }
-  sessions.push({ id: 'h1', start: at(0, 8, 2), end: at(0, 12, 4), note: 'Revisão do relatório mensal' });
+  sessions.push({ id: 'h1', start: at(0, 8, 2), end: at(0, 12, 4), note: L.todayNote });
   sessions.push({ id: 'h2', start: at(0, 13, 5), end: null, note: '' });
 
   const planner = {
     events: [
-      { id: 'e1', title: 'Reunião com cliente', date: key(at(0, 12)), time: '15:30', leadMin: 10, note: 'Alinhamento do projeto. O link está no e-mail.' },
-      { id: 'e2', title: 'Academia', date: key(at(0, 12)), time: '18:30', leadMin: 30, note: '' },
-      { id: 'e3', title: 'Dentista', date: key(at(1, 12)), time: '09:00', leadMin: 60, note: 'Levar os exames.' },
-      { id: 'e4', title: 'Entrega do projeto', date: key(at(3, 12)), time: '14:00', leadMin: 30, note: '' },
-      { id: 'e5', title: 'Daily da equipe', date: key(at(-1, 12)), time: '09:30', leadMin: 5, note: '' }
+      { id: 'e1', title: L.events[0], date: key(at(0, 12)), time: '15:30', leadMin: 10, note: L.eventNotes[0] },
+      { id: 'e2', title: L.events[1], date: key(at(0, 12)), time: '18:30', leadMin: 30, note: '' },
+      { id: 'e3', title: L.events[2], date: key(at(1, 12)), time: '09:00', leadMin: 60, note: L.eventNotes[1] },
+      { id: 'e4', title: L.events[3], date: key(at(3, 12)), time: '14:00', leadMin: 30, note: '' },
+      { id: 'e5', title: L.events[4], date: key(at(-1, 12)), time: '09:30', leadMin: 5, note: '' }
     ],
     tasks: [
-      { id: 'k1', title: 'Alongar por 10 minutos', kind: 'daily', doneDates: [key(NOW)] },
-      { id: 'k2', title: 'Responder e-mails pendentes', kind: 'daily', doneDates: [key(NOW)] },
-      { id: 'k3', title: 'Ler 20 páginas', kind: 'daily', doneDates: [] },
-      { id: 'k4', title: 'Planejar o dia seguinte', kind: 'daily', doneDates: [] },
-      { id: 'k5', title: 'Pagar o boleto do contador', kind: 'once', due: key(at(-1, 12)), done: false, doneAt: null },
-      { id: 'k6', title: 'Emitir a nota fiscal do mês', kind: 'once', due: key(NOW), done: false, doneAt: null },
-      { id: 'k7', title: 'Renovar o domínio do site', kind: 'once', due: key(at(10, 12)), done: false, doneAt: null },
-      { id: 'k8', title: 'Enviar o relatório mensal', kind: 'once', due: '', done: true, doneAt: at(-1, 16) }
+      { id: 'k1', title: L.tasks[0], kind: 'daily', doneDates: [key(NOW)] },
+      { id: 'k2', title: L.tasks[1], kind: 'daily', doneDates: [key(NOW)] },
+      { id: 'k3', title: L.tasks[2], kind: 'daily', doneDates: [] },
+      { id: 'k4', title: L.tasks[3], kind: 'daily', doneDates: [] },
+      { id: 'k5', title: L.tasks[4], kind: 'once', due: key(at(-1, 12)), done: false, doneAt: null },
+      { id: 'k6', title: L.tasks[5], kind: 'once', due: key(NOW), done: false, doneAt: null },
+      { id: 'k7', title: L.tasks[6], kind: 'once', due: key(at(10, 12)), done: false, doneAt: null },
+      { id: 'k8', title: L.tasks[7], kind: 'once', due: '', done: true, doneAt: at(-1, 16) }
     ]
   };
 
@@ -141,7 +174,7 @@ async function shot(win, file, { width = 1280, height = 800, grow = true, select
 
 async function alertShot(query, file, width, height) {
   const a = new BrowserWindow({ width, height, show: false, frame: false, webPreferences: prefs });
-  await a.loadFile(path.join(ROOT, 'alert.html'), { query: { sound: '0', loop: '0', lang: 'pt-BR', ...query } });
+  await a.loadFile(path.join(ROOT, 'alert.html'), { query: { sound: '0', loop: '0', lang: LANG, ...query } });
   a.webContents.debugger.attach('1.3');
   await js(a, "document.body.classList.remove('ringing')"); // sem a vibração, para a imagem não sair torta
   await shot(a, file, { width, height, grow: false });
@@ -165,10 +198,10 @@ async function run() {
     class D extends R0 { constructor(...a) { a.length ? super(...a) : super(R0.now() + off); } static now() { return R0.now() + off; } }
     window.Date = D;
     refreshWeather = async () => {};
-    WX = { ok: true, place: 'Joinville, Santa Catarina, Brasil', unit: 'c', temp: 27.4, feels: 29.1, humidity: 62, code: 2, isDay: true, max: 31, min: 19, rain: 20, at: Date.now() - 4 * 60000 };
+    WX = { ok: true, place: ${JSON.stringify(L.place)}, unit: 'c', temp: 27.4, feels: 29.1, humidity: 62, code: 2, isDay: true, max: 31, min: 19, rain: 20, at: Date.now() - 4 * 60000 };
     wxAt = Date.now();
     C.autostart = true;
-    C.alertSound = { name: 'sino-suave.mp4' };
+    C.alertSound = { name: ${JSON.stringify(L.sound)} };
     sel = ${JSON.stringify(selKey)};
   })()`);
 
@@ -199,19 +232,21 @@ async function run() {
   nativeTheme.themeSource = 'light';
   await sleep(500);
 
-  console.log('Idiomas');
-  await js(win, "C.lang = 'en-US'");
-  await view('hoje', '20-hoje-ingles.png');
-  await js(win, "C.lang = 'es'");
-  await view('hoje', '21-hoje-espanhol.png');
-  await js(win, "C.lang = 'pt-BR'");
+  if (LANG === 'pt-BR') { // amostra dos outros idiomas dentro do conjunto em português
+    console.log('Idiomas');
+    await js(win, "C.lang = 'en-US'");
+    await view('hoje', '20-hoje-ingles.png');
+    await js(win, "C.lang = 'es'");
+    await view('hoje', '21-hoje-espanhol.png');
+    await js(win, "C.lang = 'pt-BR'");
+  }
 
   console.log('Alertas');
   await alertShot({ mode: 'full' }, '30-alerta-agua-tela-cheia.png', 1280, 720);
   await alertShot({ mode: 'corner' }, '31-alerta-agua-canto.png', 400, 270);
   await alertShot({ mode: 'corner', ponto: '12:00' }, '32-alerta-ponto-canto.png', 400, 270);
-  await alertShot({ mode: 'corner', event: 'Reunião com cliente', at: '15:30' }, '33-alerta-compromisso-canto.png', 400, 270);
-  await alertShot({ mode: 'full', event: 'Reunião com cliente', at: '15:30' }, '34-alerta-compromisso-tela-cheia.png', 1280, 720);
+  await alertShot({ mode: 'corner', event: L.events[0], at: '15:30' }, '33-alerta-compromisso-canto.png', 400, 270);
+  await alertShot({ mode: 'full', event: L.events[0], at: '15:30' }, '34-alerta-compromisso-tela-cheia.png', 1280, 720);
 }
 
 run()
